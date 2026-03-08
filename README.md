@@ -32,7 +32,9 @@
 - 源仓库：`https://github.com/depressi0n/codex-config-viewer`
 - Vercel 会从这个公开仓库拉起导入流程
 - 当前项目不需要额外环境变量即可完成部署
-- 由于仓库包含 `pnpm-lock.yaml` 且使用 `Next.js`，Vercel 会自动识别框架与安装命令
+- 仓库根目录提供了 `vercel.json`，显式声明 Vercel 的部署行为
+- 当前显式固定的部署行为为：`framework = nextjs`、`installCommand = pnpm install`、`buildCommand = pnpm build`、`devCommand = pnpm dev`
+- 这样即使平台默认推断策略后续调整，项目的部署入口也仍然会按仓库内声明执行
 
 ## 技术栈
 
