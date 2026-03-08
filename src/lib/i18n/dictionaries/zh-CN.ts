@@ -6,8 +6,15 @@ export const zhCnDictionary: DictionaryShape = {
     subtitle: "基于官方 Codex sample config 的双语可视化编辑器，支持 TOML 导入、预览和导出。",
     badge: "基于 2026-03-08 官方 sample 审核",
     sampleLabel: "官方 sample 快照",
+    recommended: {
+      label: "推荐起步配置",
+      description:
+        "这是一个基于 2026-03-08 官方 sample 的项目内推荐预设，面向日常编码场景：workspace-write、失败时请求审批、core shell 继承、实时 Web 搜索。",
+      note: "该预设带有项目判断，不属于官方 sample 原文。",
+    },
     actions: {
       importFile: "导入 config.toml",
+      applyRecommended: "应用推荐预设",
       resetSample: "重置为 sample",
       copyToml: "复制 TOML",
       downloadToml: "下载 config.toml",
@@ -52,6 +59,7 @@ export const zhCnDictionary: DictionaryShape = {
     feedback: {
       copied: "已复制生成后的 TOML。",
       downloaded: "已下载 config.toml。",
+      recommendedApplied: "已应用本项目的推荐起步配置。",
       generateFailed: "生成预览失败。",
       idle: "就绪",
     },

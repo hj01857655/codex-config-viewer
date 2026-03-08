@@ -7,8 +7,15 @@ export const enDictionary: DictionaryShape = {
       "A bilingual visual editor for the official Codex config sample, with TOML import, preview, and export.",
     badge: "Reviewed against official sample on 2026-03-08",
     sampleLabel: "Official sample snapshot",
+    recommended: {
+      label: "Recommended starter preset",
+      description:
+        "An app-maintained preset built on the 2026-03-08 official sample for day-to-day coding: workspace-write sandbox, on-failure approvals, core shell inheritance, and live web search.",
+      note: "This preset is opinionated and is not part of the official sample.",
+    },
     actions: {
       importFile: "Import config.toml",
+      applyRecommended: "Apply recommended preset",
       resetSample: "Reset to sample",
       copyToml: "Copy TOML",
       downloadToml: "Download config.toml",
@@ -55,6 +62,7 @@ export const enDictionary: DictionaryShape = {
     feedback: {
       copied: "Copied generated TOML to the clipboard.",
       downloaded: "Downloaded config.toml.",
+      recommendedApplied: "Applied the app's recommended starter preset.",
       generateFailed: "Preview generation failed.",
       idle: "Ready",
     },

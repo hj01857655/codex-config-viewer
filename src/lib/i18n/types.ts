@@ -4,6 +4,7 @@ export interface DictionaryShape {
     subtitle: string;
     badge: string;
     sampleLabel: string;
+    recommended: Record<string, string>;
     actions: Record<string, string>;
     language: Record<string, string>;
     reference: Record<string, string>;

@@ -4,7 +4,7 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { ConfigEditor } from "@/components/config-editor";
-import { createSampleDraft } from "@/lib/config/defaults";
+import { createRecommendedDraft, createSampleDraft } from "@/lib/config/defaults";
 import { generateConfigToml } from "@/lib/config/toml";
 import { getDictionary } from "@/lib/i18n/config";
 
@@ -109,6 +109,61 @@ describe("ConfigEditor", () => {
 
     await waitFor(() => {
       expect(within(section).queryByDisplayValue("azure")).not.toBeInTheDocument();
+    });
+  });
+
+  it("applies the recommended preset", async () => {
+    render(
+      <ConfigEditor
+        locale="en"
+        dictionary={getDictionary("en")}
+        initialDraft={createSampleDraft()}
+        initialPreview={generateConfigToml(createSampleDraft()).toml}
+        initialUnsupportedToml=""
+      />,
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Apply recommended preset" }));
+
+    const generalSection = screen.getByRole("heading", { name: "General" }).closest("section");
+    expect(generalSection).not.toBeNull();
+    if (!generalSection) {
+      return;
+    }
+
+    const recommendedDraft = createRecommendedDraft();
+    const toolsSection = screen.getByRole("heading", { name: "Tools" }).closest("section");
+    const sandboxSection = screen.getByRole("heading", { name: "Sandbox" }).closest("section");
+
+    expect(
+      within(generalSection).getByRole("combobox", { name: /approval policy/i }),
+    ).toHaveValue(recommendedDraft.general.approvalPolicy);
+    expect(
+      within(generalSection).getByRole("combobox", { name: /sandbox mode/i }),
+    ).toHaveValue(recommendedDraft.general.sandboxMode);
+    expect(toolsSection).not.toBeNull();
+    if (!toolsSection) {
+      return;
+    }
+
+    expect(
+      within(toolsSection).getByRole("combobox", { name: /web search/i }),
+    ).toHaveValue(recommendedDraft.general.webSearch);
+
+    expect(sandboxSection).not.toBeNull();
+    if (!sandboxSection) {
+      return;
+    }
+
+    expect(within(sandboxSection).getByRole("checkbox")).toBeChecked();
+
+    await waitFor(() => {
+      expect(window.localStorage.getItem("codex-config-viewer-state:v1")).toContain(
+        '"approvalPolicy":"on-failure"',
+      );
+      expect(window.localStorage.getItem("codex-config-viewer-state:v1")).toContain(
+        '"networkAccess":true',
+      );
     });
   });
 });

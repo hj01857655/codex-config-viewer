@@ -186,3 +186,17 @@ export function createSampleDraft(): ConfigDraft {
     projects: [],
   };
 }
+
+export function createRecommendedDraft(): ConfigDraft {
+  const draft = createSampleDraft();
+
+  draft.general.approvalPolicy = "on-failure";
+  draft.general.sandboxMode = "workspace-write";
+  draft.general.webSearch = "live";
+  draft.history.persistence = "save-all";
+  draft.sandboxWorkspaceWrite.networkAccess = true;
+  draft.shellEnvironmentPolicy.inherit = "core";
+  draft.tools.webSearch = "live";
+
+  return draft;
+}

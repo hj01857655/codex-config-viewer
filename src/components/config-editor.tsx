@@ -19,6 +19,7 @@ import {
   createEmptyModelProvider,
   createEmptyProfile,
   createEmptyProject,
+  createRecommendedDraft,
   REPOSITORY_URL,
   SAMPLE_REFERENCE_URL,
   createSampleDraft,
@@ -374,15 +375,25 @@ export function ConfigEditor({
     });
   }
 
-  function resetToSample() {
-    setDraft(createSampleDraft());
+  function applyPreset(nextDraft: ConfigDraft, message: string, nextPreview?: string) {
+    setDraft(nextDraft);
     setUnsupportedToml("");
     setWarnings([]);
-    setPreview(initialPreview);
+    if (typeof nextPreview === "string") {
+      setPreview(nextPreview);
+    }
     setStatus({
       tone: "success",
-      message: dictionary.app.sampleLabel,
+      message,
     });
+  }
+
+  function applyRecommendedPreset() {
+    applyPreset(createRecommendedDraft(), dictionary.app.feedback.recommendedApplied);
+  }
+
+  function resetToSample() {
+    applyPreset(createSampleDraft(), dictionary.app.sampleLabel, initialPreview);
   }
 
   const sharedOptionBlank = (
@@ -2025,6 +2036,26 @@ export function ConfigEditor({
                   >
                     GitHub
                   </a>
+                </div>
+              </div>
+              <div className="mb-4 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4">
+                <div className="text-sm font-semibold text-emerald-100">
+                  {dictionary.app.recommended.label}
+                </div>
+                <p className="mt-1 text-sm leading-6 text-emerald-50/85">
+                  {dictionary.app.recommended.description}
+                </p>
+                <p className="mt-2 text-xs leading-5 text-emerald-100/70">
+                  {dictionary.app.recommended.note}
+                </p>
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    className={secondaryButtonClassName}
+                    onClick={applyRecommendedPreset}
+                  >
+                    {dictionary.app.actions.applyRecommended}
+                  </button>
                 </div>
               </div>
               <div className="flex flex-wrap gap-3">

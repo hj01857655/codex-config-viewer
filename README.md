@@ -4,6 +4,7 @@
 
 - 双语界面：`zh-CN` / `en`
 - 可视化编辑 Codex 常用配置
+- 内置“推荐起步配置”预设，可一键应用
 - 导入已有 `config.toml` 并回填表单
 - 保留未支持字段到高级 TOML 区域
 - 实时生成、复制、下载 `config.toml`
@@ -88,6 +89,18 @@ pnpm test
 - `Reset to sample` / `重置为 sample`
 
 来恢复默认配置。
+
+如果你希望从更适合日常开发的配置开始，也可以点击：
+
+- `Apply recommended preset` / `应用推荐预设`
+
+当前推荐预设是本项目维护的非官方起步配置，基于 `2026-03-08` 审核的官方 sample 进行收敛，默认会应用这些关键值：
+
+- `approval_policy = "on-failure"`
+- `sandbox_mode = "workspace-write"`
+- `shell_environment_policy.inherit = "core"`
+- `sandbox_workspace_write.network_access = true`
+- `tools.web_search = "live"` 与 `web_search = "live"`
 
 ### 2. 通过表单编辑配置
 

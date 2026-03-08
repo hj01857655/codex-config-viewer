@@ -1,5 +1,6 @@
 import {
   createEmptyMcpServer,
+  createRecommendedDraft,
   createSampleDraft,
 } from "@/lib/config/defaults";
 import {
@@ -82,5 +83,18 @@ describe("config TOML transforms", () => {
       expect(result.error.line).toBeGreaterThan(0);
       expect(result.error.column).toBeGreaterThan(0);
     }
+  });
+
+  it("serializes the recommended preset with expected operational defaults", () => {
+    const draft = createRecommendedDraft();
+    const generated = generateConfigToml(draft);
+    const parsed = parseConfigToml(generated.toml);
+
+    expect(parsed.draft.general.approvalPolicy).toBe("on-failure");
+    expect(parsed.draft.general.sandboxMode).toBe("workspace-write");
+    expect(parsed.draft.general.webSearch).toBe("live");
+    expect(parsed.draft.tools.webSearch).toBe("live");
+    expect(parsed.draft.shellEnvironmentPolicy.inherit).toBe("core");
+    expect(parsed.draft.sandboxWorkspaceWrite.networkAccess).toBe(true);
   });
 });
