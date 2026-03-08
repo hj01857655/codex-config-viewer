@@ -1,0 +1,7 @@
+.ace-tool/
+.next/
+node_modules/
+.pnpm-store/
+coverage/
+dist/
+*.tsbuildinfo
