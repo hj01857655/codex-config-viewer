@@ -34,6 +34,7 @@ export const zhCnDictionary: DictionaryShape = {
       label: "参考来源",
       source: "官方 sample config",
       declaredAt: "声明日期",
+      codexVersion: "Codex 版本",
     },
     deploy: {
       label: "一键部署",

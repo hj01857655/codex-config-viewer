@@ -35,6 +35,7 @@ export const enDictionary: DictionaryShape = {
       label: "Reference",
       source: "Official sample config",
       declaredAt: "Declared date",
+      codexVersion: "Codex version",
     },
     deploy: {
       label: "One-click deploy",

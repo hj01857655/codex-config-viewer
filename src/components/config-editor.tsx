@@ -24,6 +24,7 @@ import {
   SAMPLE_REFERENCE_URL,
   createSampleDraft,
   SAMPLE_REVIEWED_ON,
+  CODEX_SAMPLE_VERSION,
   VERCEL_DEPLOY_URL,
 } from "@/lib/config/defaults";
 import {
@@ -435,6 +436,9 @@ export function ConfigEditor({
                 </a>
                 <span>
                   {dictionary.app.reference.declaredAt}: {SAMPLE_REVIEWED_ON}
+                </span>
+                <span>
+                  {dictionary.app.reference.codexVersion}: {CODEX_SAMPLE_VERSION}
                 </span>
               </div>
               <div>
@@ -2250,6 +2254,9 @@ export function ConfigEditor({
                 </div>
                 <div>
                   {dictionary.app.reference.declaredAt}: {SAMPLE_REVIEWED_ON}
+                </div>
+                <div>
+                  {dictionary.app.reference.codexVersion}: {CODEX_SAMPLE_VERSION}
                 </div>
               </div>
             </div>

@@ -7,6 +7,7 @@ import type {
 } from "@/lib/config/types";
 
 export const SAMPLE_REVIEWED_ON = "2026-03-13";
+export const CODEX_SAMPLE_VERSION = SAMPLE_REVIEWED_ON;
 export const SAMPLE_REFERENCE_URL = "https://developers.openai.com/codex/config-sample/";
 export const REPOSITORY_URL = "https://github.com/depressi0n/codex-config-viewer";
 export const VERCEL_DEPLOY_URL = `https://vercel.com/new/clone?${new URLSearchParams({
