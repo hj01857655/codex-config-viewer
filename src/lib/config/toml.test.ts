@@ -34,7 +34,7 @@ describe("config TOML transforms", () => {
       "# Reference: https://developers.openai.com/codex/config-sample/",
     );
     expect(generated.toml).toContain(
-      "# Declared against official sample on 2026-03-08",
+      "# Declared against official sample on 2026-03-13",
     );
     expect(parsed.draft.general.model).toBe("gpt-5.4");
     expect(parsed.draft.general.sandboxMode).toBe("workspace-write");
@@ -91,10 +91,10 @@ describe("config TOML transforms", () => {
     const generated = generateConfigToml(draft);
     const parsed = parseConfigToml(generated.toml);
 
-    expect(parsed.draft.general.approvalPolicy).toBe("on-failure");
+    expect(parsed.draft.general.approvalPolicy).toBe("on-request");
     expect(parsed.draft.general.sandboxMode).toBe("workspace-write");
     expect(parsed.draft.general.webSearch).toBe("live");
-    expect(parsed.draft.tools.webSearch).toBe("live");
+    expect(parsed.draft.tools.viewImage).toBe(true);
     expect(parsed.draft.shellEnvironmentPolicy.inherit).toBe("core");
     expect(parsed.draft.sandboxWorkspaceWrite.networkAccess).toBe(true);
   });

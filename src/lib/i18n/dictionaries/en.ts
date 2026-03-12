@@ -5,12 +5,12 @@ export const enDictionary: DictionaryShape = {
     title: "Codex Config Viewer",
     subtitle:
       "A bilingual visual editor for the official Codex config sample, with TOML import, preview, and export.",
-    badge: "Reviewed against official sample on 2026-03-08",
+    badge: "Reviewed against official sample on 2026-03-13",
     sampleLabel: "Official sample snapshot",
     recommended: {
       label: "Recommended starter preset",
       description:
-        "An app-maintained preset built on the 2026-03-08 official sample for day-to-day coding: workspace-write sandbox, on-failure approvals, core shell inheritance, and live web search.",
+        "An app-maintained preset built on the 2026-03-13 official sample for day-to-day coding: workspace-write sandbox, on-request approvals, core shell inheritance, and live web search.",
       note: "This preset is opinionated and is not part of the official sample.",
     },
     actions: {
@@ -65,6 +65,7 @@ export const enDictionary: DictionaryShape = {
       nonNegativeNumber: "{{field}} must be 0 or greater.",
       positiveNumber: "{{field}} must be greater than 0.",
       duplicateKey: "{{field}} contains duplicate key: {{value}}.",
+      deprecatedValue: "{{field}} is deprecated: {{value}}.",
       missingDefaultModel:
         "Set {{field}} or {{alternateField}} so Codex has a default configuration.",
       profileTarget: "profile",
@@ -164,6 +165,7 @@ export const enDictionary: DictionaryShape = {
     sandboxMode: ["Sandbox mode", "Filesystem and network access policy."],
     serviceTier: ["Service tier", "Preferred service tier when supported."],
     webSearch: ["Web search", "Use cached or live web search results."],
+    viewImage: ["View image tool", "Enable [tools].view_image."],
     activeProfile: ["Active profile", "Name of the applied profile."],
     modelReasoningEffort: ["Reasoning effort", "Reasoning effort for normal mode."],
     planModeReasoningEffort: [
@@ -279,7 +281,7 @@ export const enDictionary: DictionaryShape = {
   options: {
     approvalPolicy: {
       untrusted: "Untrusted",
-      "on-failure": "On failure",
+      "on-failure": "On failure (deprecated)",
       "on-request": "On request",
       never: "Never",
     },

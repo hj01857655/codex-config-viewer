@@ -100,7 +100,7 @@ export interface ShellEnvironmentSettings {
 }
 
 export interface ToolsSettings {
-  webSearch: WebSearchValue;
+  viewImage: boolean;
 }
 
 export interface ModelProviderDraft {

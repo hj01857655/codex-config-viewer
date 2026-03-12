@@ -4,12 +4,12 @@ export const zhCnDictionary: DictionaryShape = {
   app: {
     title: "Codex 配置可视化管理器",
     subtitle: "基于官方 Codex sample config 的双语可视化编辑器，支持 TOML 导入、预览和导出。",
-    badge: "基于 2026-03-08 官方 sample 审核",
+    badge: "基于 2026-03-13 官方 sample 审核",
     sampleLabel: "官方 sample 快照",
     recommended: {
       label: "推荐起步配置",
       description:
-        "这是一个基于 2026-03-08 官方 sample 的项目内推荐预设，面向日常编码场景：workspace-write、失败时请求审批、core shell 继承、实时 Web 搜索。",
+        "这是一个基于 2026-03-13 官方 sample 的项目内推荐预设，面向日常编码场景：workspace-write、按需请求审批、core shell 继承、实时 Web 搜索。",
       note: "该预设带有项目判断，不属于官方 sample 原文。",
     },
     actions: {
@@ -62,6 +62,7 @@ export const zhCnDictionary: DictionaryShape = {
       nonNegativeNumber: "{{field}} 必须大于或等于 0。",
       positiveNumber: "{{field}} 必须大于 0。",
       duplicateKey: "{{field}} 中包含重复键：{{value}}。",
+      deprecatedValue: "{{field}} 已弃用：{{value}}。",
       missingDefaultModel: "请设置 {{field}} 或 {{alternateField}}，为 Codex 提供默认配置。",
       profileTarget: "profile",
       rowHasContent: "该行已经填写了其他值",
@@ -127,7 +128,7 @@ export const zhCnDictionary: DictionaryShape = {
     },
     tools: {
       title: "工具",
-      description: "sample schema 中与工具相关的行为。",
+      description: "sample schema 中与 tools 相关的行为。",
     },
     modelProviders: {
       title: "Model Providers",
@@ -158,6 +159,7 @@ export const zhCnDictionary: DictionaryShape = {
     sandboxMode: ["沙箱模式", "文件系统和网络访问策略。"],
     serviceTier: ["服务层级", "支持时优先使用的服务层级。"],
     webSearch: ["Web Search", "使用 cached 或 live 网络搜索结果。"],
+    viewImage: ["图像查看工具", "启用 [tools].view_image。"],
     activeProfile: ["当前 Profile", "当前启用的 profile 名称。"],
     modelReasoningEffort: ["推理强度", "普通模式下的推理强度。"],
     planModeReasoningEffort: ["计划模式推理", "plan mode 下的可选推理覆盖。"],
@@ -226,7 +228,7 @@ export const zhCnDictionary: DictionaryShape = {
   options: {
     approvalPolicy: {
       untrusted: "Untrusted",
-      "on-failure": "失败时请求",
+      "on-failure": "失败时请求（已弃用）",
       "on-request": "按需请求",
       never: "从不请求",
     },

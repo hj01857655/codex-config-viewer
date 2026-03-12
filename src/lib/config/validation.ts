@@ -152,6 +152,8 @@ export function validateConfigDraft(
     interpolate(validationText.nonNegativeNumber, { field });
   const positiveNumber = (field: string) =>
     interpolate(validationText.positiveNumber, { field });
+  const deprecatedValue = (field: string, value: string) =>
+    interpolate(validationText.deprecatedValue, { field, value });
 
   if (!draft.general.model.trim() && !draft.general.activeProfile.trim()) {
     issues.push(
@@ -162,6 +164,16 @@ export function validateConfigDraft(
           field: fieldLabel("model"),
           alternateField: fieldLabel("activeProfile"),
         }),
+      ),
+    );
+  }
+
+  if (draft.general.approvalPolicy === "on-failure") {
+    issues.push(
+      createIssue(
+        "warning",
+        formatPath("general.approvalPolicy"),
+        deprecatedValue(fieldLabel("approvalPolicy"), "on-failure"),
       ),
     );
   }
@@ -219,6 +231,18 @@ export function validateConfigDraft(
       ),
     );
   }
+
+  draft.profiles.forEach((profile, index) => {
+    if (profile.approvalPolicy === "on-failure") {
+      issues.push(
+        createIssue(
+          "warning",
+          formatPath(`profiles[${index}].approvalPolicy`),
+          deprecatedValue(fieldLabel("approvalPolicy"), "on-failure"),
+        ),
+      );
+    }
+  });
 
   draft.modelProviders.forEach((provider, index) => {
     const basePath = `modelProviders[${index}]`;

@@ -163,7 +163,6 @@ export function buildSupportedTomlObject(
   warnings: ConfigParseWarning[] = [],
 ): TomlObject {
   const raw: TomlObject = {};
-  const sample = createSampleDraft();
 
   maybeAssignString(raw, "model", draft.general.model);
   maybeAssignString(raw, "review_model", draft.general.reviewModel);
@@ -171,7 +170,7 @@ export function buildSupportedTomlObject(
   maybeAssignString(raw, "approval_policy", draft.general.approvalPolicy);
   maybeAssignString(raw, "sandbox_mode", draft.general.sandboxMode);
   maybeAssignString(raw, "service_tier", draft.general.serviceTier);
-  maybeAssignString(raw, "web_search", draft.tools.webSearch || draft.general.webSearch);
+  maybeAssignString(raw, "web_search", draft.general.webSearch);
   maybeAssignString(raw, "profile", draft.general.activeProfile);
   maybeAssignString(raw, "model_reasoning_effort", draft.general.modelReasoningEffort);
   maybeAssignString(
@@ -258,6 +257,12 @@ export function buildSupportedTomlObject(
     raw.shell_environment_policy = shellEnvironmentPolicy;
   }
 
+  const tools: TomlObject = {};
+  maybeAssignBoolean(tools, "view_image", draft.tools.viewImage);
+  if (Object.keys(tools).length > 0) {
+    raw.tools = tools;
+  }
+
   const modelProviders: TomlObject = {};
   for (const provider of draft.modelProviders) {
     const id = provider.id.trim();
@@ -316,10 +321,6 @@ export function buildSupportedTomlObject(
   }
   if (Object.keys(projects).length > 0) {
     raw.projects = projects;
-  }
-
-  if (!raw.web_search && sample.tools.webSearch && draft.general.webSearch) {
-    raw.web_search = draft.general.webSearch;
   }
 
   return raw;
@@ -450,7 +451,13 @@ export function parseSupportedTomlObject(value: TomlObject): ConfigDraft {
   draft.general.suppressUnstableFeaturesWarning = parseBoolean(
     value.suppress_unstable_features_warning,
   );
-  draft.tools.webSearch = draft.general.webSearch;
+  if (isPlainObject(value.tools)) {
+    draft.tools.viewImage = parseBoolean(value.tools.view_image);
+    const legacyWebSearch = parseString(value.tools.web_search) as ConfigDraft["general"]["webSearch"];
+    if (!draft.general.webSearch && legacyWebSearch) {
+      draft.general.webSearch = legacyWebSearch;
+    }
+  }
 
   if (isPlainObject(value.history)) {
     draft.history.persistence = parseString(
@@ -606,6 +613,13 @@ export function extractUnsupportedFragment(value: TomlObject): TomlObject {
     ]);
     if (Object.keys(clone.shell_environment_policy).length === 0) {
       delete clone.shell_environment_policy;
+    }
+  }
+
+  if (isPlainObject(clone.tools)) {
+    stripKnownKeys(clone.tools, ["view_image", "web_search"]);
+    if (Object.keys(clone.tools).length === 0) {
+      delete clone.tools;
     }
   }
 

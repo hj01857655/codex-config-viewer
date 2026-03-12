@@ -145,14 +145,15 @@ describe("ConfigEditor", () => {
     expect(
       within(generalSection).getByRole("combobox", { name: /sandbox mode/i }),
     ).toHaveValue(recommendedDraft.general.sandboxMode);
+    expect(
+      within(generalSection).getByRole("combobox", { name: /web search/i }),
+    ).toHaveValue(recommendedDraft.general.webSearch);
     expect(toolsSection).not.toBeNull();
     if (!toolsSection) {
       return;
     }
 
-    expect(
-      within(toolsSection).getByRole("combobox", { name: /web search/i }),
-    ).toHaveValue(recommendedDraft.general.webSearch);
+    expect(within(toolsSection).getByRole("checkbox")).toBeChecked();
 
     expect(sandboxSection).not.toBeNull();
     if (!sandboxSection) {
@@ -163,7 +164,7 @@ describe("ConfigEditor", () => {
 
     await waitFor(() => {
       expect(window.localStorage.getItem("codex-config-viewer-state:v1")).toContain(
-        '"approvalPolicy":"on-failure"',
+        '"approvalPolicy":"on-request"',
       );
       expect(window.localStorage.getItem("codex-config-viewer-state:v1")).toContain(
         '"networkAccess":true',

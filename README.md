@@ -14,7 +14,7 @@
 ## 参考来源
 
 - 官方参考链接：[https://developers.openai.com/codex/config-sample/](https://developers.openai.com/codex/config-sample/)
-- 当前项目声明基于该 sample 的审核时间：`2026-03-08`
+- 当前项目声明基于该 sample 的审核时间：`2026-03-13`
 - Vercel Deploy Button 参考文档：[Working with the Deploy Button](https://vercel.com/docs/deployments/deploy-button)
 
 说明：
@@ -96,13 +96,13 @@ pnpm test
 
 - `Apply recommended preset` / `应用推荐预设`
 
-当前推荐预设是本项目维护的非官方起步配置，基于 `2026-03-08` 审核的官方 sample 进行收敛，默认会应用这些关键值：
+当前推荐预设是本项目维护的非官方起步配置，基于 `2026-03-13` 审核的官方 sample 进行收敛，默认会应用这些关键值：
 
-- `approval_policy = "on-failure"`
+- `approval_policy = "on-request"`
 - `sandbox_mode = "workspace-write"`
 - `shell_environment_policy.inherit = "core"`
 - `sandbox_workspace_write.network_access = true`
-- `tools.web_search = "live"` 与 `web_search = "live"`
+- `web_search = "live"`
 
 ### 2. 通过表单编辑配置
 
@@ -170,7 +170,7 @@ pnpm test
 
 ```toml
 # Reference: https://developers.openai.com/codex/config-sample/
-# Declared against official sample on 2026-03-08
+# Declared against official sample on 2026-03-13
 ```
 
 ## API 说明

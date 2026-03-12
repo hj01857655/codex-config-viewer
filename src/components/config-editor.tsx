@@ -247,13 +247,6 @@ export function ConfigEditor({
         ...current.general,
         [key]: value,
       },
-      tools:
-        key === "webSearch"
-          ? {
-              ...current.tools,
-              webSearch: value as ConfigDraft["tools"]["webSearch"],
-            }
-          : current.tools,
     }));
   }
 
@@ -319,13 +312,6 @@ export function ConfigEditor({
         ...current.tools,
         [key]: value,
       },
-      general:
-        key === "webSearch"
-          ? {
-              ...current.general,
-              webSearch: value as ConfigDraft["general"]["webSearch"],
-            }
-          : current.general,
     }));
   }
 
@@ -583,6 +569,25 @@ export function ConfigEditor({
                     {SERVICE_TIER_OPTIONS.map((option) => (
                       <option key={option} value={option}>
                         {dictionary.options.serviceTier[option]}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field {...fieldText("webSearch")}>
+                  <select
+                    className={inputClassName}
+                    value={draft.general.webSearch}
+                    onChange={(event) =>
+                      updateGeneral(
+                        "webSearch",
+                        event.target.value as ConfigDraft["general"]["webSearch"],
+                      )
+                    }
+                  >
+                    {sharedOptionBlank}
+                    {WEB_SEARCH_OPTIONS.map((option) => (
+                      <option key={option} value={option}>
+                        {dictionary.options.webSearch[option]}
                       </option>
                     ))}
                   </select>
@@ -965,27 +970,24 @@ export function ConfigEditor({
               title={dictionary.sections.tools.title}
               description={dictionary.sections.tools.description}
             >
-              <div className="grid gap-4 md:grid-cols-2">
-                <Field {...fieldText("webSearch")}>
-                  <select
-                    className={inputClassName}
-                    value={draft.tools.webSearch}
-                    onChange={(event) =>
-                      updateTools(
-                        "webSearch",
-                        event.target.value as ConfigDraft["tools"]["webSearch"],
-                      )
-                    }
-                  >
-                    {sharedOptionBlank}
-                    {WEB_SEARCH_OPTIONS.map((option) => (
-                      <option key={option} value={option}>
-                        {dictionary.options.webSearch[option]}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-              </div>
+              <label
+                className={`flex items-start gap-3 rounded-2xl border px-4 py-3 ${boolInputClass(draft.tools.viewImage)}`}
+              >
+                <input
+                  type="checkbox"
+                  className="mt-1 h-4 w-4 accent-emerald-400"
+                  checked={draft.tools.viewImage}
+                  onChange={(event) => updateTools("viewImage", event.target.checked)}
+                />
+                <div>
+                  <div className="text-sm font-medium text-slate-200">
+                    {fieldText("viewImage").label}
+                  </div>
+                  <p className="mt-1 text-xs leading-5 text-slate-400">
+                    {fieldText("viewImage").hint}
+                  </p>
+                </div>
+              </label>
             </SectionCard>
 
             <SectionCard

@@ -6,6 +6,7 @@ import type { SupportedLocale } from "@/lib/config/types";
 const ROOT_SECTION_MAP: Record<string, string> = {
   history: "history",
   features: "features",
+  tools: "tools",
   sandbox_workspace_write: "sandbox",
   shell_environment_policy: "shell",
   model_providers: "modelProviders",
@@ -108,6 +109,9 @@ function resolveNestedFieldKey(root: string, key: string) {
       ignore_default_excludes: "ignoreDefaultExcludes",
       exclude: "shellExclude",
       include_only: "shellIncludeOnly",
+    },
+    tools: {
+      view_image: "viewImage",
     },
     model_providers: {
       name: "providerName",

@@ -6,7 +6,7 @@ import type {
   ProjectDraft,
 } from "@/lib/config/types";
 
-export const SAMPLE_REVIEWED_ON = "2026-03-08";
+export const SAMPLE_REVIEWED_ON = "2026-03-13";
 export const SAMPLE_REFERENCE_URL = "https://developers.openai.com/codex/config-sample/";
 export const REPOSITORY_URL = "https://github.com/depressi0n/codex-config-viewer";
 export const VERCEL_DEPLOY_URL = `https://vercel.com/new/clone?${new URLSearchParams({
@@ -124,7 +124,7 @@ export function createEmptyDraft(): ConfigDraft {
       includeOnly: [],
     },
     tools: {
-      webSearch: "",
+      viewImage: false,
     },
     modelProviders: [],
     mcpServers: [],
@@ -178,7 +178,7 @@ export function createSampleDraft(): ConfigDraft {
       includeOnly: [],
     },
     tools: {
-      webSearch: "cached",
+      viewImage: true,
     },
     modelProviders: [],
     mcpServers: [],
@@ -190,13 +190,13 @@ export function createSampleDraft(): ConfigDraft {
 export function createRecommendedDraft(): ConfigDraft {
   const draft = createSampleDraft();
 
-  draft.general.approvalPolicy = "on-failure";
+  draft.general.approvalPolicy = "on-request";
   draft.general.sandboxMode = "workspace-write";
   draft.general.webSearch = "live";
   draft.history.persistence = "save-all";
   draft.sandboxWorkspaceWrite.networkAccess = true;
   draft.shellEnvironmentPolicy.inherit = "core";
-  draft.tools.webSearch = "live";
+  draft.tools.viewImage = true;
 
   return draft;
 }
