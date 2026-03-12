@@ -36,6 +36,7 @@
 - 源仓库：`https://github.com/depressi0n/codex-config-viewer`
 - Vercel 会从这个公开仓库拉起导入流程
 - 不预填项目名或仓库名，避免名称冲突时阻塞部署
+- 若提示项目名已被占用，请在导入页填写一个新名字，例如：`codex-config-viewer-hj01857655`
 - 当前项目不需要额外环境变量即可完成部署
 - 仓库根目录提供了 `vercel.json`，显式声明 Vercel 的部署行为
 - 当前显式固定的部署行为为：`framework = nextjs`、`installCommand = pnpm install`、`buildCommand = pnpm build`、`devCommand = pnpm dev`
