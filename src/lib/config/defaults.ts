@@ -11,8 +11,6 @@ export const SAMPLE_REFERENCE_URL = "https://developers.openai.com/codex/config-
 export const REPOSITORY_URL = "https://github.com/depressi0n/codex-config-viewer";
 export const VERCEL_DEPLOY_URL = `https://vercel.com/new/clone?${new URLSearchParams({
   "repository-url": REPOSITORY_URL,
-  "project-name": "codex-config-viewer",
-  "repository-name": "codex-config-viewer",
 }).toString()}`;
 
 export function createEmptyModelProvider(): ModelProviderDraft {

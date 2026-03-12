@@ -24,16 +24,17 @@
 
 ## 一键部署到 Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdepressi0n%2Fcodex-config-viewer&project-name=codex-config-viewer&repository-name=codex-config-viewer)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdepressi0n%2Fcodex-config-viewer)
 
 如果你更喜欢直接打开部署入口，也可以访问：
 
-- [Deploy with Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdepressi0n%2Fcodex-config-viewer&project-name=codex-config-viewer&repository-name=codex-config-viewer)
+- [Deploy with Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdepressi0n%2Fcodex-config-viewer)
 
 当前仓库的一键部署配置说明：
 
 - 源仓库：`https://github.com/depressi0n/codex-config-viewer`
 - Vercel 会从这个公开仓库拉起导入流程
+- 不预填项目名或仓库名，避免名称冲突时阻塞部署
 - 当前项目不需要额外环境变量即可完成部署
 - 仓库根目录提供了 `vercel.json`，显式声明 Vercel 的部署行为
 - 当前显式固定的部署行为为：`framework = nextjs`、`installCommand = pnpm install`、`buildCommand = pnpm build`、`devCommand = pnpm dev`
