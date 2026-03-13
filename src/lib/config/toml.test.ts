@@ -36,7 +36,9 @@ describe("config TOML transforms", () => {
     expect(generated.toml).toContain(
       "# Declared against official sample on 2026-03-13",
     );
-    expect(generated.toml).toContain("# Codex version: 2026-03-13");
+    expect(generated.toml).toContain(
+      "# Codex release: 0.115.0-alpha.18 (rust-v0.115.0-alpha.18)",
+    );
     expect(parsed.draft.general.model).toBe("gpt-5.4");
     expect(parsed.draft.general.sandboxMode).toBe("workspace-write");
     expect(parsed.draft.history.maxBytes).toBe("5242880");

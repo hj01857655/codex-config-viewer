@@ -7,8 +7,10 @@ import type {
 } from "@/lib/config/types";
 
 export const SAMPLE_REVIEWED_ON = "2026-03-13";
-export const CODEX_SAMPLE_VERSION = SAMPLE_REVIEWED_ON;
 export const SAMPLE_REFERENCE_URL = "https://developers.openai.com/codex/config-sample/";
+export const CODEX_REPOSITORY_URL = "https://github.com/openai/codex";
+export const CODEX_RELEASE_VERSION = "0.115.0-alpha.18";
+export const CODEX_RELEASE_TAG = "rust-v0.115.0-alpha.18";
 export const REPOSITORY_URL = "https://github.com/depressi0n/codex-config-viewer";
 export const VERCEL_DEPLOY_URL = `https://vercel.com/new/clone?${new URLSearchParams({
   "repository-url": REPOSITORY_URL,

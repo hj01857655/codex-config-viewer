@@ -6,7 +6,8 @@ import {
   createEmptyModelProvider,
   createEmptyProfile,
   createSampleDraft,
-  CODEX_SAMPLE_VERSION,
+  CODEX_RELEASE_TAG,
+  CODEX_RELEASE_VERSION,
   SAMPLE_REFERENCE_URL,
   SAMPLE_REVIEWED_ON,
 } from "@/lib/config/defaults";
@@ -946,7 +947,7 @@ function addReferenceHeader(toml: string): string {
   const header = [
     `# Reference: ${SAMPLE_REFERENCE_URL}`,
     `# Declared against official sample on ${SAMPLE_REVIEWED_ON}`,
-    `# Codex version: ${CODEX_SAMPLE_VERSION}`,
+    `# Codex release: ${CODEX_RELEASE_VERSION} (${CODEX_RELEASE_TAG})`,
     "",
   ].join("\n");
 

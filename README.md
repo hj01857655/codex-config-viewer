@@ -15,7 +15,7 @@
 
 - 官方参考链接：[https://developers.openai.com/codex/config-sample/](https://developers.openai.com/codex/config-sample/)
 - 当前项目声明基于该 sample 的审核时间：`2026-03-13`
-- Codex 对应版本：`2026-03-13`
+- Codex 仓库版本：`0.115.0-alpha.18`（tag: `rust-v0.115.0-alpha.18`）
 - Vercel Deploy Button 参考文档：[Working with the Deploy Button](https://vercel.com/docs/deployments/deploy-button)
 
 说明：
@@ -174,7 +174,7 @@ pnpm test
 ```toml
 # Reference: https://developers.openai.com/codex/config-sample/
 # Declared against official sample on 2026-03-13
-# Codex version: 2026-03-13
+# Codex release: 0.115.0-alpha.18 (rust-v0.115.0-alpha.18)
 ```
 
 ## API 说明
