@@ -47,6 +47,8 @@ export type TransportValue = "stdio" | "http";
 
 export type TrustLevelValue = "" | "trusted" | "untrusted";
 
+export type OptionalBooleanValue = "" | "true" | "false";
+
 export interface KeyValueItem {
   key: string;
   value: string;
@@ -83,8 +85,32 @@ export interface HistorySettings {
 }
 
 export interface FeaturesSettings {
-  disableFastModel: boolean;
-  useExperimentalReasoningSummary: boolean;
+  shellTool: OptionalBooleanValue;
+  apps: OptionalBooleanValue;
+  appsMcpGateway: OptionalBooleanValue;
+  unifiedExec: OptionalBooleanValue;
+  shellSnapshot: OptionalBooleanValue;
+  multiAgent: OptionalBooleanValue;
+  personality: OptionalBooleanValue;
+  useLinuxSandboxBwrap: OptionalBooleanValue;
+  runtimeMetrics: OptionalBooleanValue;
+  powershellUtf8: OptionalBooleanValue;
+  childAgentsMd: OptionalBooleanValue;
+  sqlite: OptionalBooleanValue;
+  fastMode: OptionalBooleanValue;
+  enableRequestCompression: OptionalBooleanValue;
+  imageGeneration: OptionalBooleanValue;
+  skillMcpDependencyInstall: OptionalBooleanValue;
+  skillEnvVarDependencyPrompt: OptionalBooleanValue;
+  defaultModeRequestUserInput: OptionalBooleanValue;
+  artifact: OptionalBooleanValue;
+  preventIdleSleep: OptionalBooleanValue;
+  responsesWebsockets: OptionalBooleanValue;
+  responsesWebsocketsV2: OptionalBooleanValue;
+  imageDetailOriginal: OptionalBooleanValue;
+  disableFastModel: OptionalBooleanValue;
+  useExperimentalReasoningSummary: OptionalBooleanValue;
+  flags: KeyValueItem[];
 }
 
 export interface SandboxWorkspaceWriteSettings {

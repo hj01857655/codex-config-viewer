@@ -19,6 +19,7 @@ import {
   formatTomlError,
   isPlainObject,
   keyValueItemsToRecord,
+  keyValueItemsToBooleanRecord,
   parseBoolean,
   parseNumberLikeString,
   parseString,
@@ -39,6 +40,7 @@ import type {
   ProfileDraft,
   ProjectDraft,
   TomlObject,
+  OptionalBooleanValue,
 } from "@/lib/config/types";
 
 function pushWarning(warnings: ConfigParseWarning[], message: string) {
@@ -65,6 +67,62 @@ function maybeAssignBoolean(target: TomlObject, key: string, value: boolean) {
     target[key] = true;
   }
 }
+
+function parseOptionalBoolean(value: unknown): OptionalBooleanValue {
+  if (typeof value === "boolean") {
+    return value ? "true" : "false";
+  }
+
+  return "";
+}
+
+function maybeAssignOptionalBoolean(
+  target: TomlObject,
+  key: string,
+  value: OptionalBooleanValue,
+) {
+  if (value === "true") {
+    target[key] = true;
+  } else if (value === "false") {
+    target[key] = false;
+  }
+}
+
+const OFFICIAL_FEATURE_KEYS = [
+  "shell_tool",
+  "apps",
+  "apps_mcp_gateway",
+  "unified_exec",
+  "shell_snapshot",
+  "multi_agent",
+  "personality",
+  "use_linux_sandbox_bwrap",
+  "runtime_metrics",
+  "powershell_utf8",
+  "child_agents_md",
+  "sqlite",
+  "fast_mode",
+  "enable_request_compression",
+  "image_generation",
+  "skill_mcp_dependency_install",
+  "skill_env_var_dependency_prompt",
+  "default_mode_request_user_input",
+  "artifact",
+  "prevent_idle_sleep",
+  "responses_websockets",
+  "responses_websockets_v2",
+  "image_detail_original",
+] as const;
+
+const LEGACY_FEATURE_KEYS = [
+  "disable_fast_model",
+  "use_experimental_reasoning_summary",
+] as const;
+
+const KNOWN_FEATURE_KEYS = new Set<string>([
+  ...OFFICIAL_FEATURE_KEYS,
+  ...LEGACY_FEATURE_KEYS,
+]);
 
 function maybeAssignNumber(target: TomlObject, key: string, value: string) {
   const numeric = parseNumber(value);
@@ -216,12 +274,71 @@ export function buildSupportedTomlObject(
   }
 
   const features: TomlObject = {};
-  maybeAssignBoolean(features, "disable_fast_model", draft.features.disableFastModel);
-  maybeAssignBoolean(
+  maybeAssignOptionalBoolean(features, "shell_tool", draft.features.shellTool);
+  maybeAssignOptionalBoolean(features, "apps", draft.features.apps);
+  maybeAssignOptionalBoolean(features, "apps_mcp_gateway", draft.features.appsMcpGateway);
+  maybeAssignOptionalBoolean(features, "unified_exec", draft.features.unifiedExec);
+  maybeAssignOptionalBoolean(features, "shell_snapshot", draft.features.shellSnapshot);
+  maybeAssignOptionalBoolean(features, "multi_agent", draft.features.multiAgent);
+  maybeAssignOptionalBoolean(features, "personality", draft.features.personality);
+  maybeAssignOptionalBoolean(
+    features,
+    "use_linux_sandbox_bwrap",
+    draft.features.useLinuxSandboxBwrap,
+  );
+  maybeAssignOptionalBoolean(features, "runtime_metrics", draft.features.runtimeMetrics);
+  maybeAssignOptionalBoolean(features, "powershell_utf8", draft.features.powershellUtf8);
+  maybeAssignOptionalBoolean(features, "child_agents_md", draft.features.childAgentsMd);
+  maybeAssignOptionalBoolean(features, "sqlite", draft.features.sqlite);
+  maybeAssignOptionalBoolean(features, "fast_mode", draft.features.fastMode);
+  maybeAssignOptionalBoolean(
+    features,
+    "enable_request_compression",
+    draft.features.enableRequestCompression,
+  );
+  maybeAssignOptionalBoolean(features, "image_generation", draft.features.imageGeneration);
+  maybeAssignOptionalBoolean(
+    features,
+    "skill_mcp_dependency_install",
+    draft.features.skillMcpDependencyInstall,
+  );
+  maybeAssignOptionalBoolean(
+    features,
+    "skill_env_var_dependency_prompt",
+    draft.features.skillEnvVarDependencyPrompt,
+  );
+  maybeAssignOptionalBoolean(
+    features,
+    "default_mode_request_user_input",
+    draft.features.defaultModeRequestUserInput,
+  );
+  maybeAssignOptionalBoolean(features, "artifact", draft.features.artifact);
+  maybeAssignOptionalBoolean(features, "prevent_idle_sleep", draft.features.preventIdleSleep);
+  maybeAssignOptionalBoolean(features, "responses_websockets", draft.features.responsesWebsockets);
+  maybeAssignOptionalBoolean(
+    features,
+    "responses_websockets_v2",
+    draft.features.responsesWebsocketsV2,
+  );
+  maybeAssignOptionalBoolean(
+    features,
+    "image_detail_original",
+    draft.features.imageDetailOriginal,
+  );
+  maybeAssignOptionalBoolean(features, "disable_fast_model", draft.features.disableFastModel);
+  maybeAssignOptionalBoolean(
     features,
     "use_experimental_reasoning_summary",
     draft.features.useExperimentalReasoningSummary,
   );
+  const featureFlags = keyValueItemsToBooleanRecord(
+    draft.features.flags.filter((item) => !KNOWN_FEATURE_KEYS.has(item.key)),
+    warnings,
+    "features",
+  );
+  if (featureFlags) {
+    Object.assign(features, featureFlags);
+  }
   if (Object.keys(features).length > 0) {
     raw.features = features;
   }
@@ -468,10 +585,51 @@ export function parseSupportedTomlObject(value: TomlObject): ConfigDraft {
   }
 
   if (isPlainObject(value.features)) {
-    draft.features.disableFastModel = parseBoolean(value.features.disable_fast_model);
-    draft.features.useExperimentalReasoningSummary = parseBoolean(
+    draft.features.shellTool = parseOptionalBoolean(value.features.shell_tool);
+    draft.features.apps = parseOptionalBoolean(value.features.apps);
+    draft.features.appsMcpGateway = parseOptionalBoolean(value.features.apps_mcp_gateway);
+    draft.features.unifiedExec = parseOptionalBoolean(value.features.unified_exec);
+    draft.features.shellSnapshot = parseOptionalBoolean(value.features.shell_snapshot);
+    draft.features.multiAgent = parseOptionalBoolean(value.features.multi_agent);
+    draft.features.personality = parseOptionalBoolean(value.features.personality);
+    draft.features.useLinuxSandboxBwrap = parseOptionalBoolean(
+      value.features.use_linux_sandbox_bwrap,
+    );
+    draft.features.runtimeMetrics = parseOptionalBoolean(value.features.runtime_metrics);
+    draft.features.powershellUtf8 = parseOptionalBoolean(value.features.powershell_utf8);
+    draft.features.childAgentsMd = parseOptionalBoolean(value.features.child_agents_md);
+    draft.features.sqlite = parseOptionalBoolean(value.features.sqlite);
+    draft.features.fastMode = parseOptionalBoolean(value.features.fast_mode);
+    draft.features.enableRequestCompression = parseOptionalBoolean(
+      value.features.enable_request_compression,
+    );
+    draft.features.imageGeneration = parseOptionalBoolean(value.features.image_generation);
+    draft.features.skillMcpDependencyInstall = parseOptionalBoolean(
+      value.features.skill_mcp_dependency_install,
+    );
+    draft.features.skillEnvVarDependencyPrompt = parseOptionalBoolean(
+      value.features.skill_env_var_dependency_prompt,
+    );
+    draft.features.defaultModeRequestUserInput = parseOptionalBoolean(
+      value.features.default_mode_request_user_input,
+    );
+    draft.features.artifact = parseOptionalBoolean(value.features.artifact);
+    draft.features.preventIdleSleep = parseOptionalBoolean(value.features.prevent_idle_sleep);
+    draft.features.responsesWebsockets = parseOptionalBoolean(value.features.responses_websockets);
+    draft.features.responsesWebsocketsV2 = parseOptionalBoolean(
+      value.features.responses_websockets_v2,
+    );
+    draft.features.imageDetailOriginal = parseOptionalBoolean(
+      value.features.image_detail_original,
+    );
+    draft.features.disableFastModel = parseOptionalBoolean(value.features.disable_fast_model);
+    draft.features.useExperimentalReasoningSummary = parseOptionalBoolean(
       value.features.use_experimental_reasoning_summary,
     );
+    draft.features.flags = Object.entries(value.features)
+      .filter(([key]) => !KNOWN_FEATURE_KEYS.has(key))
+      .filter(([, entry]) => typeof entry === "boolean")
+      .map(([key, entry]) => ({ key, value: entry ? "true" : "false" }));
   }
 
   if (isPlainObject(value.sandbox_workspace_write)) {
@@ -589,10 +747,12 @@ export function extractUnsupportedFragment(value: TomlObject): TomlObject {
   }
 
   if (isPlainObject(clone.features)) {
-    stripKnownKeys(clone.features, [
-      "disable_fast_model",
-      "use_experimental_reasoning_summary",
-    ]);
+    stripKnownKeys(clone.features, [...OFFICIAL_FEATURE_KEYS, ...LEGACY_FEATURE_KEYS]);
+    Object.entries(clone.features).forEach(([key, entry]) => {
+      if (typeof entry === "boolean") {
+        delete clone.features?.[key];
+      }
+    });
     if (Object.keys(clone.features).length === 0) {
       delete clone.features;
     }

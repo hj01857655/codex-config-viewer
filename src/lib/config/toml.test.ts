@@ -17,7 +17,7 @@ describe("config TOML transforms", () => {
     draft.sandboxWorkspaceWrite.writableRoots = ["/tmp/shared"];
     draft.sandboxWorkspaceWrite.networkAccess = true;
     draft.history.maxBytes = "5242880";
-    draft.features.useExperimentalReasoningSummary = true;
+    draft.features.useExperimentalReasoningSummary = "true";
     draft.projects = [{ path: "/workspace/project", trustLevel: "trusted" }];
 
     const docsServer = createEmptyMcpServer();
@@ -40,7 +40,7 @@ describe("config TOML transforms", () => {
     expect(parsed.draft.general.model).toBe("gpt-5.4");
     expect(parsed.draft.general.sandboxMode).toBe("workspace-write");
     expect(parsed.draft.history.maxBytes).toBe("5242880");
-    expect(parsed.draft.features.useExperimentalReasoningSummary).toBe(true);
+    expect(parsed.draft.features.useExperimentalReasoningSummary).toBe("true");
     expect(parsed.draft.sandboxWorkspaceWrite.writableRoots).toEqual(["/tmp/shared"]);
     expect(parsed.draft.mcpServers[0]?.url).toBe("https://docs.example.com/mcp");
     expect(parsed.draft.projects[0]?.trustLevel).toBe("trusted");
@@ -145,5 +145,35 @@ describe("config TOML transforms", () => {
         (issue) => issue.path === "history.maxBytes" && issue.severity === "error",
       ),
     ).toBe(true);
+  });
+
+  it("round-trips explicit official feature flags", () => {
+    const draft = createSampleDraft();
+    draft.features.fastMode = "false";
+    draft.features.unifiedExec = "true";
+    draft.features.shellTool = "true";
+    draft.features.responsesWebsocketsV2 = "false";
+
+    const generated = generateConfigToml(draft);
+
+    expect(generated.toml).toContain("fast_mode = false");
+    expect(generated.toml).toContain("unified_exec = true");
+    expect(generated.toml).toContain("shell_tool = true");
+    expect(generated.toml).toContain("responses_websockets_v2 = false");
+
+    const parsed = parseConfigToml(generated.toml);
+    expect(parsed.draft.features.fastMode).toBe("false");
+    expect(parsed.draft.features.unifiedExec).toBe("true");
+    expect(parsed.draft.features.shellTool).toBe("true");
+    expect(parsed.draft.features.responsesWebsocketsV2).toBe("false");
+  });
+
+  it("captures unknown feature flags into deprecated list", () => {
+    const parsed = parseConfigToml(
+      ["[features]", "fast_mode = false", "custom_flag = true"].join("\n"),
+    );
+
+    expect(parsed.draft.features.fastMode).toBe("false");
+    expect(parsed.draft.features.flags).toEqual([{ key: "custom_flag", value: "true" }]);
   });
 });

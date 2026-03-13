@@ -1,6 +1,11 @@
 import { TomlError } from "smol-toml";
 
-import type { ConfigParseErrorShape, KeyValueItem, TomlObject } from "@/lib/config/types";
+import type {
+  ConfigParseErrorShape,
+  ConfigParseWarning,
+  KeyValueItem,
+  TomlObject,
+} from "@/lib/config/types";
 
 export function compactStringList(items: string[]): string[] {
   return items.map((item) => item.trim()).filter(Boolean);
@@ -34,6 +39,39 @@ export function keyValueItemsToRecord(items: KeyValueItem[]): Record<string, str
   }
 
   return Object.fromEntries(compacted.map((item) => [item.key, item.value]));
+}
+
+export function keyValueItemsToBooleanRecord(
+  items: KeyValueItem[],
+  warnings: ConfigParseWarning[] = [],
+  section = "features",
+): Record<string, boolean> | undefined {
+  const compacted = compactKeyValueList(items);
+
+  if (compacted.length === 0) {
+    return undefined;
+  }
+
+  const record: Record<string, boolean> = {};
+
+  for (const item of compacted) {
+    const normalized = item.value.trim().toLowerCase();
+    if (normalized === "true") {
+      record[item.key] = true;
+      continue;
+    }
+
+    if (normalized === "false") {
+      record[item.key] = false;
+      continue;
+    }
+
+    warnings.push({
+      message: `Ignored ${section} flag "${item.key}" because value is not a boolean.`,
+    });
+  }
+
+  return Object.keys(record).length > 0 ? record : undefined;
 }
 
 export function parseStringArray(value: unknown): string[] {
