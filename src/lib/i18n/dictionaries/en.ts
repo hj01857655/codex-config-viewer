@@ -211,6 +211,67 @@ export const enDictionary: DictionaryShape = {
     ],
     historyPersistence: ["Persistence", "save-all or none."],
     historyMaxBytes: ["Max history bytes", "Trim oldest history entries after this size."],
+    featureShellTool: ["Shell tool", "Enable the shell tool in Codex."],
+    featureApps: ["Apps", "Enable ChatGPT Apps/connectors support."],
+    featureAppsMcpGateway: [
+      "Apps MCP gateway",
+      "Route Apps MCP calls through the OpenAI gateway.",
+    ],
+    featureUnifiedExec: ["Unified exec", "Use the unified PTY-backed exec tool."],
+    featureShellSnapshot: [
+      "Shell snapshot",
+      "Snapshot shell env to speed up repeated commands.",
+    ],
+    featureMultiAgent: ["Multi-agent", "Enable multi-agent collaboration tools."],
+    featurePersonality: ["Personality", "Enable personality selection controls."],
+    featureUseLinuxSandboxBwrap: [
+      "Linux sandbox bwrap",
+      "Use bubblewrap-based Linux sandbox.",
+    ],
+    featureRuntimeMetrics: ["Runtime metrics", "Show runtime metrics summary in TUI."],
+    featurePowershellUtf8: ["PowerShell UTF-8", "Force PowerShell UTF-8 output."],
+    featureChildAgentsMd: [
+      "Child AGENTS.md",
+      "Append AGENTS.md scope guidance even when missing.",
+    ],
+    featureSqlite: ["SQLite", "Enable SQLite-backed state persistence."],
+    featureFastMode: ["Fast mode", "Enable Fast mode selection and service_tier=fast."],
+    featureEnableRequestCompression: [
+      "Request compression",
+      "Compress streaming request bodies with zstd.",
+    ],
+    featureImageGeneration: ["Image generation", "Enable built-in image generation tool."],
+    featureSkillMcpDependencyInstall: [
+      "Skill MCP dependency install",
+      "Allow prompting/installing missing MCP deps.",
+    ],
+    featureSkillEnvVarDependencyPrompt: [
+      "Skill env var prompt",
+      "Prompt for missing env var dependencies.",
+    ],
+    featureDefaultModeRequestUserInput: [
+      "Default mode request_user_input",
+      "Allow request_user_input in default mode.",
+    ],
+    featureArtifact: ["Artifacts", "Enable native artifact tools (slides/spreadsheets)."],
+    featurePreventIdleSleep: ["Prevent idle sleep", "Prevent machine sleep during runs."],
+    featureResponsesWebsockets: [
+      "Responses websockets",
+      "Prefer Responses API WebSocket transport.",
+    ],
+    featureResponsesWebsocketsV2: [
+      "Responses websockets v2",
+      "Enable Responses WebSocket v2 mode.",
+    ],
+    featureImageDetailOriginal: [
+      "Image detail original",
+      "Allow image outputs with detail=original.",
+    ],
+    featureDisableFastModel: ["Disable fast model (legacy)", "Legacy flag; prefer fast_mode."],
+    featureUseExperimentalReasoningSummary: [
+      "Experimental reasoning summary (legacy)",
+      "Legacy flag; prefer model_reasoning_summary.",
+    ],
     disableFastModel: [
       "Disable fast model",
       "Disable the fast model shortcut when a feature flag would enable it.",

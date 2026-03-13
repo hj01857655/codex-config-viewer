@@ -116,6 +116,14 @@ describe("config TOML transforms", () => {
     expect(withoutComments.toml).not.toContain("# Model: Default session model.");
   });
 
+  it("adds comments for official feature flags", () => {
+    const draft = createSampleDraft();
+    draft.features.shellTool = "true";
+
+    const generated = generateConfigToml(draft, "", { includeComments: true, locale: "en" });
+    expect(generated.toml).toContain("# Shell tool: Enable the shell tool in Codex.");
+  });
+
   it("returns validation issues from generated draft output", () => {
     const draft = createSampleDraft();
     draft.general.activeProfile = "missing";
