@@ -24,7 +24,8 @@ import {
   SAMPLE_REFERENCE_URL,
   createSampleDraft,
   SAMPLE_REVIEWED_ON,
-  CODEX_SAMPLE_VERSION,
+  CODEX_RELEASE_TAG,
+  CODEX_RELEASE_VERSION,
   VERCEL_DEPLOY_URL,
 } from "@/lib/config/defaults";
 import {
@@ -33,6 +34,7 @@ import {
   FILE_OPENER_OPTIONS,
   HISTORY_PERSISTENCE_OPTIONS,
   LOGIN_METHOD_OPTIONS,
+  OPTIONAL_BOOLEAN_OPTIONS,
   PLAN_REASONING_OPTIONS,
   REASONING_OPTIONS,
   SANDBOX_MODE_OPTIONS,
@@ -48,6 +50,7 @@ import type {
   ConfigValidationIssue,
   GenerateConfigResponse,
   ParseConfigResponse,
+  OptionalBooleanValue,
 } from "@/lib/config/types";
 import type { Dictionary, Locale } from "@/lib/i18n/config";
 import { getAlternateLocale } from "@/lib/i18n/config";
@@ -68,6 +71,32 @@ type StatusMessage = {
 };
 
 const STORAGE_KEY = "codex-config-viewer-state:v1";
+
+const OFFICIAL_FEATURE_FIELDS = [
+  "shellTool",
+  "apps",
+  "appsMcpGateway",
+  "unifiedExec",
+  "shellSnapshot",
+  "multiAgent",
+  "personality",
+  "useLinuxSandboxBwrap",
+  "runtimeMetrics",
+  "powershellUtf8",
+  "childAgentsMd",
+  "sqlite",
+  "fastMode",
+  "enableRequestCompression",
+  "imageGeneration",
+  "skillMcpDependencyInstall",
+  "skillEnvVarDependencyPrompt",
+  "defaultModeRequestUserInput",
+  "artifact",
+  "preventIdleSleep",
+  "responsesWebsockets",
+  "responsesWebsocketsV2",
+  "imageDetailOriginal",
+] as const satisfies ReadonlyArray<keyof ConfigDraft["features"]>;
 
 function statusClassName(tone: StatusTone) {
   if (tone === "success") {
@@ -438,7 +467,8 @@ export function ConfigEditor({
                   {dictionary.app.reference.declaredAt}: {SAMPLE_REVIEWED_ON}
                 </span>
                 <span>
-                  {dictionary.app.reference.codexVersion}: {CODEX_SAMPLE_VERSION}
+                  {dictionary.app.reference.codexVersion}: {CODEX_RELEASE_VERSION} (
+                  {CODEX_RELEASE_TAG})
                 </span>
               </div>
               <div>
@@ -828,34 +858,62 @@ export function ConfigEditor({
               title={dictionary.sections.features.title}
               description={dictionary.sections.features.description}
             >
+              <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3">
+                <div className="text-sm font-semibold text-emerald-50">
+                  {dictionary.helpers.featuresOfficialTitle}
+                </div>
+                <p className="mt-1 text-xs text-emerald-100/80">
+                  {dictionary.helpers.featuresOfficialHint}
+                </p>
+              </div>
               <div className="grid gap-3 md:grid-cols-2">
-                {([
-                  ["disableFastModel", draft.features.disableFastModel],
-                  [
-                    "useExperimentalReasoningSummary",
-                    draft.features.useExperimentalReasoningSummary,
-                  ],
-                ] as const).map(([key, checked]) => {
-                  const { label, hint } = fieldText(key);
-
-                  return (
-                    <label
-                      key={key}
-                      className={`flex items-start gap-3 rounded-2xl border px-4 py-3 ${boolInputClass(checked)}`}
+                {OFFICIAL_FEATURE_FIELDS.map((key) => (
+                  <Field key={key} {...fieldText(key)}>
+                    <select
+                      className={inputClassName}
+                      value={draft.features[key]}
+                      onChange={(event) =>
+                        updateFeatures(key, event.target.value as OptionalBooleanValue)
+                      }
                     >
-                      <input
-                        type="checkbox"
-                        className="mt-1 h-4 w-4 accent-emerald-400"
-                        checked={checked}
-                        onChange={(event) => updateFeatures(key, event.target.checked)}
-                      />
-                      <div>
-                        <div className="text-sm font-medium text-slate-200">{label}</div>
-                        <p className="mt-1 text-xs leading-5 text-slate-400">{hint}</p>
+                      {sharedOptionBlank}
+                      {OPTIONAL_BOOLEAN_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {dictionary.options.optionalBoolean[option]}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                ))}
+              </div>
+              <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-3">
+                <div className="text-sm font-semibold text-amber-100">
+                  {dictionary.helpers.featuresDeprecatedTitle}
+                </div>
+                <p className="mt-1 text-xs text-amber-100/80">
+                  {dictionary.helpers.featuresDeprecatedHint}
+                </p>
+                {draft.features.flags.length === 0 ? (
+                  <div className="mt-3 text-xs text-amber-100/60">
+                    {dictionary.app.emptyStates.pairs}
+                  </div>
+                ) : (
+                  <div className="mt-3 grid gap-2">
+                    {draft.features.flags.map((item, index) => (
+                      <div
+                        key={`${item.key}-${index}`}
+                        className="grid grid-cols-[1fr_auto] gap-2 text-xs"
+                      >
+                        <code className="rounded bg-black/30 px-2 py-1 text-amber-50">
+                          {item.key}
+                        </code>
+                        <code className="rounded bg-black/30 px-2 py-1 text-amber-50">
+                          {item.value}
+                        </code>
                       </div>
-                    </label>
-                  );
-                })}
+                    ))}
+                  </div>
+                )}
               </div>
             </SectionCard>
 
@@ -2256,7 +2314,8 @@ export function ConfigEditor({
                   {dictionary.app.reference.declaredAt}: {SAMPLE_REVIEWED_ON}
                 </div>
                 <div>
-                  {dictionary.app.reference.codexVersion}: {CODEX_SAMPLE_VERSION}
+                  {dictionary.app.reference.codexVersion}: {CODEX_RELEASE_VERSION} (
+                  {CODEX_RELEASE_TAG})
                 </div>
               </div>
             </div>

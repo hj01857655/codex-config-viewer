@@ -49,6 +49,8 @@ export const FILE_OPENER_OPTIONS = [
 
 export const SERVICE_TIER_OPTIONS = ["fast", "flex"] as const;
 
+export const OPTIONAL_BOOLEAN_OPTIONS = ["true", "false"] as const;
+
 export const TRANSPORT_OPTIONS = [
   { value: "stdio", label: "STDIO" },
   { value: "http", label: "HTTP" },

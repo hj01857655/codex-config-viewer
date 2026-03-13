@@ -222,4 +222,20 @@ describe("ConfigEditor", () => {
       expect(screen.getByText(/greater than 0/i)).toBeInTheDocument();
     });
   });
+
+  it("renders official feature toggles and deprecated flags block", async () => {
+    render(
+      <ConfigEditor
+        locale="en"
+        dictionary={getDictionary("en")}
+        initialDraft={createSampleDraft()}
+        initialPreview={createPreview("en")}
+        initialUnsupportedToml=""
+      />,
+    );
+
+    expect(await screen.findByText("Official feature toggles")).toBeInTheDocument();
+    expect(screen.getByText("Shell tool")).toBeInTheDocument();
+    expect(screen.getByText("Deprecated feature flags (read-only)")).toBeInTheDocument();
+  });
 });

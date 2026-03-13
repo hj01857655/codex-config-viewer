@@ -34,7 +34,7 @@ export const zhCnDictionary: DictionaryShape = {
       label: "参考来源",
       source: "官方 sample config",
       declaredAt: "声明日期",
-      codexVersion: "Codex 版本",
+      codexVersion: "Codex 仓库版本",
     },
     deploy: {
       label: "一键部署",
@@ -218,6 +218,29 @@ export const zhCnDictionary: DictionaryShape = {
       "实验性推理摘要（legacy）",
       "旧标记；优先使用 model_reasoning_summary。",
     ],
+    shellTool: ["Shell tool", "启用 Codex 的 shell 工具。"],
+    apps: ["Apps", "启用 ChatGPT Apps/连接器支持。"],
+    appsMcpGateway: ["Apps MCP 网关", "通过 OpenAI 网关转发 Apps MCP 调用。"],
+    unifiedExec: ["Unified exec", "启用统一的 PTY exec 工具。"],
+    shellSnapshot: ["Shell 快照", "快照 shell 环境以加速重复命令。"],
+    multiAgent: ["多智能体", "启用多智能体协作工具。"],
+    personality: ["风格偏好", "启用 personality 选择。"],
+    useLinuxSandboxBwrap: ["Linux sandbox bwrap", "使用 bubblewrap 的 Linux sandbox。"],
+    runtimeMetrics: ["运行指标", "在 TUI 中显示运行指标摘要。"],
+    powershellUtf8: ["PowerShell UTF-8", "强制 PowerShell UTF-8 输出。"],
+    childAgentsMd: ["Child AGENTS.md", "在缺少时也追加 AGENTS.md 作用域说明。"],
+    sqlite: ["SQLite", "启用基于 SQLite 的状态持久化。"],
+    fastMode: ["Fast mode", "启用 Fast mode 与 service_tier=fast。"],
+    enableRequestCompression: ["请求压缩", "使用 zstd 压缩流式请求体。"],
+    imageGeneration: ["图像生成", "启用内置图像生成工具。"],
+    skillMcpDependencyInstall: ["Skill MCP 依赖安装", "允许提示并安装缺失的 MCP 依赖。"],
+    skillEnvVarDependencyPrompt: ["Skill 环境变量提示", "提示缺失的环境变量依赖。"],
+    defaultModeRequestUserInput: ["默认模式 request_user_input", "允许默认模式请求用户输入。"],
+    artifact: ["Artifacts", "启用原生产物工具（幻灯片/表格）。"],
+    preventIdleSleep: ["防止空闲休眠", "运行期间防止设备休眠。"],
+    responsesWebsockets: ["Responses WebSocket", "优先使用 Responses WebSocket 传输。"],
+    responsesWebsocketsV2: ["Responses WebSocket v2", "启用 Responses WebSocket v2 模式。"],
+    imageDetailOriginal: ["图像原始细节", "允许 detail=original 的图像输出。"],
     disableFastModel: ["禁用 fast model", "关闭功能开关启用的 fast model shortcut。"],
     useExperimentalReasoningSummary: [
       "启用实验性推理摘要",
@@ -265,6 +288,11 @@ export const zhCnDictionary: DictionaryShape = {
   helpers: {
     sandboxHidden: "只有 sandbox mode 设为 workspace-write 时此区块才会生效，但你仍可提前配置。",
     mcpHttpMode: "HTTP 模式对应 sample 中的远程 MCP transport，使用 url 与 token 相关字段。",
+    featuresOfficialTitle: "官方特性开关",
+    featuresOfficialHint: "显式选择 true/false 覆盖默认值，留空则跟随 Codex 默认行为。",
+    featuresDeprecatedTitle: "已废弃特性（只读）",
+    featuresDeprecatedHint:
+      "这是从导入的 TOML 中捕获的旧/未知开关，需在高级 TOML 区域修改。",
   },
   options: {
     approvalPolicy: {
@@ -272,6 +300,10 @@ export const zhCnDictionary: DictionaryShape = {
       "on-failure": "失败时请求（已弃用）",
       "on-request": "按需请求",
       never: "从不请求",
+    },
+    optionalBoolean: {
+      true: "是",
+      false: "否",
     },
     sandboxMode: {
       "read-only": "只读",

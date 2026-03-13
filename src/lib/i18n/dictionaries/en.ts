@@ -35,7 +35,7 @@ export const enDictionary: DictionaryShape = {
       label: "Reference",
       source: "Official sample config",
       declaredAt: "Declared date",
-      codexVersion: "Codex version",
+      codexVersion: "Codex release",
     },
     deploy: {
       label: "One-click deploy",
@@ -272,6 +272,32 @@ export const enDictionary: DictionaryShape = {
       "Experimental reasoning summary (legacy)",
       "Legacy flag; prefer model_reasoning_summary.",
     ],
+    shellTool: ["Shell tool", "Enable the shell tool in Codex."],
+    apps: ["Apps", "Enable ChatGPT Apps/connectors support."],
+    appsMcpGateway: ["Apps MCP gateway", "Route Apps MCP calls through the OpenAI gateway."],
+    unifiedExec: ["Unified exec", "Use the unified PTY-backed exec tool."],
+    shellSnapshot: ["Shell snapshot", "Snapshot shell env to speed up repeated commands."],
+    multiAgent: ["Multi-agent", "Enable multi-agent collaboration tools."],
+    personality: ["Personality", "Enable personality selection controls."],
+    useLinuxSandboxBwrap: ["Linux sandbox bwrap", "Use bubblewrap-based Linux sandbox."],
+    runtimeMetrics: ["Runtime metrics", "Show runtime metrics summary in TUI."],
+    powershellUtf8: ["PowerShell UTF-8", "Force PowerShell UTF-8 output."],
+    childAgentsMd: ["Child AGENTS.md", "Append AGENTS.md scope guidance even when missing."],
+    sqlite: ["SQLite", "Enable SQLite-backed state persistence."],
+    fastMode: ["Fast mode", "Enable Fast mode selection and service_tier=fast."],
+    enableRequestCompression: ["Request compression", "Compress streaming request bodies with zstd."],
+    imageGeneration: ["Image generation", "Enable built-in image generation tool."],
+    skillMcpDependencyInstall: ["Skill MCP dependency install", "Allow prompting/installing missing MCP deps."],
+    skillEnvVarDependencyPrompt: ["Skill env var prompt", "Prompt for missing env var dependencies."],
+    defaultModeRequestUserInput: [
+      "Default mode request_user_input",
+      "Allow request_user_input in default mode.",
+    ],
+    artifact: ["Artifacts", "Enable native artifact tools (slides/spreadsheets)."],
+    preventIdleSleep: ["Prevent idle sleep", "Prevent machine sleep during runs."],
+    responsesWebsockets: ["Responses websockets", "Prefer Responses API WebSocket transport."],
+    responsesWebsocketsV2: ["Responses websockets v2", "Enable Responses WebSocket v2 mode."],
+    imageDetailOriginal: ["Image detail original", "Allow image outputs with detail=original."],
     disableFastModel: [
       "Disable fast model",
       "Disable the fast model shortcut when a feature flag would enable it.",
@@ -339,6 +365,12 @@ export const enDictionary: DictionaryShape = {
       "This section only applies when sandbox mode is set to workspace-write, but you can still preconfigure it.",
     mcpHttpMode:
       "HTTP mode models the sample's remote MCP transport using url and token-related fields.",
+    featuresOfficialTitle: "Official feature toggles",
+    featuresOfficialHint:
+      "Set explicit true/false to override defaults, or leave unset to follow Codex defaults.",
+    featuresDeprecatedTitle: "Deprecated feature flags (read-only)",
+    featuresDeprecatedHint:
+      "Legacy or unknown flags captured from imported TOML. Update them in the advanced TOML area.",
   },
   options: {
     approvalPolicy: {
@@ -346,6 +378,10 @@ export const enDictionary: DictionaryShape = {
       "on-failure": "On failure (deprecated)",
       "on-request": "On request",
       never: "Never",
+    },
+    optionalBoolean: {
+      true: "True",
+      false: "False",
     },
     sandboxMode: {
       "read-only": "Read only",
