@@ -4,12 +4,12 @@ export const zhCnDictionary: DictionaryShape = {
   app: {
     title: "Codex 配置可视化管理器",
     subtitle: "基于官方 Codex sample config 的双语可视化编辑器，支持 TOML 导入、预览和导出。",
-    badge: "基于 2026-03-13 官方 sample 审核",
+    badge: "基于 2026-03-15 官方 sample 审核",
     sampleLabel: "官方 sample 快照",
     recommended: {
       label: "推荐起步配置",
       description:
-        "这是一个基于 2026-03-13 官方 sample 的项目内推荐预设，面向日常编码场景：workspace-write、按需请求审批、core shell 继承、实时 Web 搜索。",
+        "这是一个基于 2026-03-15 官方 sample 的项目内推荐预设，面向日常编码场景：workspace-write、按需请求审批、core shell 继承、实时 Web 搜索。",
       note: "该预设带有项目判断，不属于官方 sample 原文。",
     },
     actions: {

@@ -5,12 +5,12 @@ export const enDictionary: DictionaryShape = {
     title: "Codex Config Viewer",
     subtitle:
       "A bilingual visual editor for the official Codex config sample, with TOML import, preview, and export.",
-    badge: "Reviewed against official sample on 2026-03-13",
+    badge: "Reviewed against official sample on 2026-03-15",
     sampleLabel: "Official sample snapshot",
     recommended: {
       label: "Recommended starter preset",
       description:
-        "An app-maintained preset built on the 2026-03-13 official sample for day-to-day coding: workspace-write sandbox, on-request approvals, core shell inheritance, and live web search.",
+        "An app-maintained preset built on the 2026-03-15 official sample for day-to-day coding: workspace-write sandbox, on-request approvals, core shell inheritance, and live web search.",
       note: "This preset is opinionated and is not part of the official sample.",
     },
     actions: {

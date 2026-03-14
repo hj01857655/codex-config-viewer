@@ -20,3 +20,6 @@ deeper `AGENTS.md` overrides them.
 
 ## Documentation
 - Keep `README.md` dates and preset descriptions aligned with config defaults.
+
+## Update Workflow
+- When refreshing Codex config defaults or sample references, consult the official OpenAI docs and the upstream GitHub repository before updating project data.

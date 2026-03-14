@@ -34,7 +34,7 @@ describe("config TOML transforms", () => {
       "# Reference: https://developers.openai.com/codex/config-sample/",
     );
     expect(generated.toml).toContain(
-      "# Declared against official sample on 2026-03-13",
+      "# Declared against official sample on 2026-03-15",
     );
     expect(generated.toml).toContain(
       "# Codex release: 0.115.0-alpha.18 (rust-v0.115.0-alpha.18)",

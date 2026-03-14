@@ -6,7 +6,7 @@ import type {
   ProjectDraft,
 } from "@/lib/config/types";
 
-export const SAMPLE_REVIEWED_ON = "2026-03-13";
+export const SAMPLE_REVIEWED_ON = "2026-03-15";
 export const SAMPLE_REFERENCE_URL = "https://developers.openai.com/codex/config-sample/";
 export const CODEX_REPOSITORY_URL = "https://github.com/openai/codex";
 export const CODEX_RELEASE_VERSION = "0.115.0-alpha.18";
