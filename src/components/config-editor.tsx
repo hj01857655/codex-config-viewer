@@ -9,6 +9,7 @@ import {
   KeyValueListEditor,
   SectionCard,
   StringListEditor,
+  hintPillClassName,
   inputClassName,
   primaryButtonClassName,
   secondaryButtonClassName,
@@ -45,6 +46,7 @@ import {
   TRUST_LEVEL_OPTIONS,
   WEB_SEARCH_OPTIONS,
 } from "@/lib/config/metadata";
+import { SCHEMA_DIFFS } from "@/lib/config/schema-changelog";
 import type {
   ConfigDraft,
   ConfigValidationIssue,
@@ -53,7 +55,7 @@ import type {
   OptionalBooleanValue,
 } from "@/lib/config/types";
 import type { Dictionary, Locale } from "@/lib/i18n/config";
-import { getAlternateLocale } from "@/lib/i18n/config";
+import { getAlternateLocale, getDictionary } from "@/lib/i18n/config";
 
 type ConfigEditorProps = {
   locale: Locale;
@@ -71,6 +73,7 @@ type StatusMessage = {
 };
 
 const STORAGE_KEY = "codex-config-viewer-state:v1";
+const EN_DICTIONARY = getDictionary("en");
 
 const OFFICIAL_FEATURE_FIELDS = [
   "shellTool",
@@ -98,20 +101,28 @@ const OFFICIAL_FEATURE_FIELDS = [
   "imageDetailOriginal",
 ] as const satisfies ReadonlyArray<keyof ConfigDraft["features"]>;
 
+const DIFF_TONE_CLASS: Record<"added" | "removed" | "deprecated", string> = {
+  added: "border-emerald-200/80 bg-emerald-50 text-emerald-700",
+  removed: "border-rose-200/80 bg-rose-50 text-rose-700",
+  deprecated: "border-amber-200/80 bg-amber-50 text-amber-700",
+};
+
 function statusClassName(tone: StatusTone) {
   if (tone === "success") {
-    return "border-emerald-400/30 bg-emerald-500/10 text-emerald-200";
+    return "border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent-strong)]";
   }
 
   if (tone === "error") {
     return "border-rose-400/30 bg-rose-500/10 text-rose-200";
   }
 
-  return "border-white/10 bg-white/5 text-slate-300";
+  return "border-[var(--border)] bg-[var(--surface-strong)] text-[var(--foreground-muted)]";
 }
 
 function boolInputClass(checked: boolean) {
-  return checked ? "bg-emerald-500/15 border-emerald-400/40" : "bg-white/[0.03] border-white/10";
+  return checked
+    ? "bg-[var(--accent)]/10 border-[var(--accent)]/40"
+    : "bg-[var(--surface-strong)] border-[var(--border)]";
 }
 
 export function ConfigEditor({
@@ -136,6 +147,12 @@ export function ConfigEditor({
   const [isImporting, setIsImporting] = useState(false);
 
   const alternateLocale = getAlternateLocale(locale);
+  const optionDictionary = dictionary.options;
+  const schemaDiffLabels = {
+    added: dictionary.helpers.schemaDiffAdded,
+    removed: dictionary.helpers.schemaDiffRemoved,
+    deprecated: dictionary.helpers.schemaDiffDeprecated,
+  };
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -264,7 +281,12 @@ export function ConfigEditor({
 
   function fieldText<Key extends keyof Dictionary["fields"]>(key: Key) {
     const [label, hint] = dictionary.fields[key];
-    return { label, hint };
+    if (locale !== "zh-CN") {
+      return { label, hint };
+    }
+
+    const [englishLabel] = EN_DICTIONARY.fields[key];
+    return { label: englishLabel, hint };
   }
 
   function updateGeneral<Key extends keyof ConfigDraft["general"]>(
@@ -343,6 +365,36 @@ export function ConfigEditor({
         [key]: value,
       },
     }));
+  }
+
+  function renderSchemaDiffGroup(
+    label: string,
+    tone: "added" | "removed" | "deprecated",
+    items: string[],
+  ) {
+    if (items.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="flex flex-wrap items-start gap-2">
+        <span
+          className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${DIFF_TONE_CLASS[tone]}`}
+        >
+          {label}
+        </span>
+        <div className="flex flex-wrap gap-2">
+          {items.map((item) => (
+            <code
+              key={item}
+              className="rounded-full border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 py-1 text-[11px] text-[var(--foreground-muted)]"
+            >
+              {item}
+            </code>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   function handleImportFile(file: File) {
@@ -447,16 +499,16 @@ export function ConfigEditor({
   return (
     <div className="min-h-screen">
       <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-6 px-4 py-6 lg:px-6">
-        <header className="rounded-3xl border border-white/10 bg-slate-950/70 p-6 shadow-[0_20px_80px_-40px_rgba(34,197,94,0.35)] backdrop-blur">
+        <header className="animate-page-in rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-card)] backdrop-blur">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
             <div className="space-y-3">
-              <div className="inline-flex items-center rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-200">
+              <div className="inline-flex items-center rounded-full border border-[var(--accent)]/25 bg-[var(--accent)]/10 px-3 py-1 text-xs font-medium tracking-[0.12em] text-[var(--accent-strong)] uppercase">
                 {dictionary.app.badge}
               </div>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-slate-400">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] uppercase tracking-[0.18em] text-[var(--foreground-muted)]">
                 <span>{dictionary.app.reference.label}</span>
                 <a
-                  className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-4 transition hover:text-emerald-200"
+                  className="text-[var(--accent)] underline decoration-emerald-400/40 underline-offset-4 transition hover:text-[var(--accent-strong)]"
                   href={SAMPLE_REFERENCE_URL}
                   target="_blank"
                   rel="noreferrer"
@@ -472,10 +524,10 @@ export function ConfigEditor({
                 </span>
               </div>
               <div>
-                <h1 className="text-3xl font-semibold tracking-tight text-white">
+                <h1 className="text-3xl font-semibold tracking-tight text-[var(--foreground)] md:text-4xl">
                   {dictionary.app.title}
                 </h1>
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--foreground-muted)] md:text-base">
                   {dictionary.app.subtitle}
                 </p>
               </div>
@@ -489,10 +541,10 @@ export function ConfigEditor({
               >
                 {dictionary.app.actions.deployVercel}
               </a>
-              <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200">
-                <span className="mr-2 text-slate-400">{dictionary.app.language.label}</span>
+              <div className="rounded-[var(--radius-control)] border border-[var(--border)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--foreground)]">
+                <span className="mr-2 text-[var(--foreground-muted)]">{dictionary.app.language.label}</span>
                 <Link
-                  className="font-medium text-emerald-300 hover:text-emerald-200"
+                  className="font-medium text-[var(--accent)] hover:text-[var(--accent-strong)]"
                   href={`/${alternateLocale}`}
                 >
                   {alternateLocale === "en"
@@ -505,8 +557,8 @@ export function ConfigEditor({
         </header>
 
         <div className="grid gap-6 xl:grid-cols-[220px_minmax(0,1fr)_420px]">
-          <aside className="h-fit rounded-3xl border border-white/10 bg-slate-950/70 p-4 backdrop-blur xl:sticky xl:top-4">
-            <div className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+          <aside className="animate-page-in animate-page-in-delay-1 h-fit rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] p-4 backdrop-blur xl:sticky xl:top-4">
+            <div className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--foreground-muted)]">
               Sections
             </div>
             <nav className="space-y-2">
@@ -514,7 +566,7 @@ export function ConfigEditor({
                 <a
                   key={section.id}
                   href={`#${section.id}`}
-                  className="block rounded-2xl px-3 py-2 text-sm text-slate-300 transition hover:bg-white/5 hover:text-white"
+                  className="block rounded-2xl px-3 py-2 text-sm text-[var(--foreground-muted)] transition hover:bg-[var(--surface-strong)] hover:text-[var(--foreground)]"
                 >
                   {section.title}
                 </a>
@@ -522,7 +574,7 @@ export function ConfigEditor({
             </nav>
           </aside>
 
-          <main className="space-y-6">
+          <main className="animate-page-in animate-page-in-delay-2 space-y-6">
             <SectionCard
               id="general"
               title={dictionary.sections.general.title}
@@ -564,7 +616,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {APPROVAL_POLICY_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.approvalPolicy[option]}
+                        {optionDictionary.approvalPolicy[option]}
                       </option>
                     ))}
                   </select>
@@ -583,7 +635,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {SANDBOX_MODE_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.sandboxMode[option]}
+                        {optionDictionary.sandboxMode[option]}
                       </option>
                     ))}
                   </select>
@@ -602,7 +654,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {SERVICE_TIER_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.serviceTier[option]}
+                        {optionDictionary.serviceTier[option]}
                       </option>
                     ))}
                   </select>
@@ -621,7 +673,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {WEB_SEARCH_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.webSearch[option]}
+                        {optionDictionary.webSearch[option]}
                       </option>
                     ))}
                   </select>
@@ -647,7 +699,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {REASONING_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.reasoning[option]}
+                        {optionDictionary.reasoning[option]}
                       </option>
                     ))}
                   </select>
@@ -666,7 +718,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {PLAN_REASONING_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.reasoning[option]}
+                        {optionDictionary.reasoning[option]}
                       </option>
                     ))}
                   </select>
@@ -704,7 +756,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {CREDENTIAL_STORE_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.credentialStore[option]}
+                        {optionDictionary.credentialStore[option]}
                       </option>
                     ))}
                   </select>
@@ -723,7 +775,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {CREDENTIAL_STORE_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.credentialStore[option]}
+                        {optionDictionary.credentialStore[option]}
                       </option>
                     ))}
                   </select>
@@ -742,7 +794,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {LOGIN_METHOD_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.loginMethod[option]}
+                        {optionDictionary.loginMethod[option]}
                       </option>
                     ))}
                   </select>
@@ -777,7 +829,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {FILE_OPENER_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.fileOpener[option]}
+                        {optionDictionary.fileOpener[option]}
                       </option>
                     ))}
                   </select>
@@ -803,13 +855,15 @@ export function ConfigEditor({
                     >
                       <input
                         type="checkbox"
-                        className="mt-1 h-4 w-4 accent-emerald-400"
+                        className="mt-1 h-4 w-4 accent-[var(--accent)]"
                         checked={checked}
                         onChange={(event) => updateGeneral(key, event.target.checked)}
                       />
                       <div>
-                        <div className="text-sm font-medium text-slate-200">{label}</div>
-                        <p className="mt-1 text-xs leading-5 text-slate-400">{hint}</p>
+                        <div className="text-sm font-medium text-[var(--foreground)]">{label}</div>
+                        <div className="mt-1">
+                          <span className={hintPillClassName}>{hint}</span>
+                        </div>
                       </div>
                     </label>
                   );
@@ -837,7 +891,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {HISTORY_PERSISTENCE_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.historyPersistence[option]}
+                        {optionDictionary.historyPersistence[option]}
                       </option>
                     ))}
                   </select>
@@ -858,11 +912,11 @@ export function ConfigEditor({
               title={dictionary.sections.features.title}
               description={dictionary.sections.features.description}
             >
-              <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3">
+              <div className="rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-3">
                 <div className="text-sm font-semibold text-emerald-50">
                   {dictionary.helpers.featuresOfficialTitle}
                 </div>
-                <p className="mt-1 text-xs text-emerald-100/80">
+                <p className="mt-1 text-xs text-[var(--accent-strong)]/80">
                   {dictionary.helpers.featuresOfficialHint}
                 </p>
               </div>
@@ -879,7 +933,7 @@ export function ConfigEditor({
                       {sharedOptionBlank}
                       {OPTIONAL_BOOLEAN_OPTIONS.map((option) => (
                         <option key={option} value={option}>
-                          {dictionary.options.optionalBoolean[option]}
+                          {optionDictionary.optionalBoolean[option]}
                         </option>
                       ))}
                     </select>
@@ -941,19 +995,21 @@ export function ConfigEditor({
               >
                 <input
                   type="checkbox"
-                  className="mt-1 h-4 w-4 accent-emerald-400"
+                  className="mt-1 h-4 w-4 accent-[var(--accent)]"
                   checked={draft.sandboxWorkspaceWrite.networkAccess}
                   onChange={(event) =>
                     updateSandboxWorkspaceWrite("networkAccess", event.target.checked)
                   }
                 />
                 <div>
-                  <div className="text-sm font-medium text-slate-200">
+                  <div className="text-sm font-medium text-[var(--foreground)]">
                     {fieldText("networkAccess").label}
                   </div>
-                  <p className="mt-1 text-xs leading-5 text-slate-400">
-                    {fieldText("networkAccess").hint}
-                  </p>
+                  <div className="mt-1">
+                    <span className={hintPillClassName}>
+                      {fieldText("networkAccess").hint}
+                    </span>
+                  </div>
                 </div>
               </label>
             </SectionCard>
@@ -978,7 +1034,7 @@ export function ConfigEditor({
                     {sharedOptionBlank}
                     {SHELL_INHERITANCE_OPTIONS.map((option) => (
                       <option key={option} value={option}>
-                        {dictionary.options.inherit[option]}
+                        {optionDictionary.inherit[option]}
                       </option>
                     ))}
                   </select>
@@ -988,7 +1044,7 @@ export function ConfigEditor({
                 >
                   <input
                     type="checkbox"
-                    className="mt-1 h-4 w-4 accent-emerald-400"
+                    className="mt-1 h-4 w-4 accent-[var(--accent)]"
                     checked={draft.shellEnvironmentPolicy.ignoreDefaultExcludes}
                     onChange={(event) =>
                       updateShellEnvironmentPolicy(
@@ -998,12 +1054,14 @@ export function ConfigEditor({
                     }
                   />
                   <div>
-                    <div className="text-sm font-medium text-slate-200">
+                    <div className="text-sm font-medium text-[var(--foreground)]">
                       {fieldText("ignoreDefaultExcludes").label}
                     </div>
-                    <p className="mt-1 text-xs leading-5 text-slate-400">
-                      {fieldText("ignoreDefaultExcludes").hint}
-                    </p>
+                    <div className="mt-1">
+                      <span className={hintPillClassName}>
+                        {fieldText("ignoreDefaultExcludes").hint}
+                      </span>
+                    </div>
                   </div>
                 </label>
               </div>
@@ -1037,17 +1095,17 @@ export function ConfigEditor({
               >
                 <input
                   type="checkbox"
-                  className="mt-1 h-4 w-4 accent-emerald-400"
+                  className="mt-1 h-4 w-4 accent-[var(--accent)]"
                   checked={draft.tools.viewImage}
                   onChange={(event) => updateTools("viewImage", event.target.checked)}
                 />
                 <div>
-                  <div className="text-sm font-medium text-slate-200">
+                  <div className="text-sm font-medium text-[var(--foreground)]">
                     {fieldText("viewImage").label}
                   </div>
-                  <p className="mt-1 text-xs leading-5 text-slate-400">
-                    {fieldText("viewImage").hint}
-                  </p>
+                  <div className="mt-1">
+                    <span className={hintPillClassName}>{fieldText("viewImage").hint}</span>
+                  </div>
                 </div>
               </label>
             </SectionCard>
@@ -1059,17 +1117,17 @@ export function ConfigEditor({
             >
               <div className="space-y-4">
                 {draft.modelProviders.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] px-4 py-5 text-sm text-slate-500">
+                  <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface-strong)] px-4 py-5 text-sm text-[var(--foreground-muted)]">
                     {dictionary.app.emptyStates.modelProviders}
                   </div>
                 ) : null}
                 {draft.modelProviders.map((provider, index) => (
                   <div
                     key={`provider-${index}`}
-                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+                    className="rounded-2xl border border-[var(--border)] bg-[var(--surface-strong)] p-4"
                   >
                     <div className="mb-4 flex items-center justify-between gap-3">
-                      <h3 className="text-sm font-semibold text-white">
+                      <h3 className="text-sm font-semibold text-[var(--foreground)]">
                         {provider.id || `${dictionary.fields.providerId[0]} ${index + 1}`}
                       </h3>
                       <button
@@ -1335,7 +1393,7 @@ export function ConfigEditor({
                       >
                         <input
                           type="checkbox"
-                          className="mt-1 h-4 w-4 accent-emerald-400"
+                          className="mt-1 h-4 w-4 accent-[var(--accent)]"
                           checked={provider.supportsWebsockets}
                           onChange={(event) =>
                             setDraft((current) => {
@@ -1352,12 +1410,14 @@ export function ConfigEditor({
                           }
                         />
                         <div>
-                          <div className="text-sm font-medium text-slate-200">
+                          <div className="text-sm font-medium text-[var(--foreground)]">
                             {fieldText("supportsWebsockets").label}
                           </div>
-                          <p className="mt-1 text-xs leading-5 text-slate-400">
-                            {fieldText("supportsWebsockets").hint}
-                          </p>
+                              <div className="mt-1">
+                                <span className={hintPillClassName}>
+                                  {fieldText("supportsWebsockets").hint}
+                                </span>
+                              </div>
                         </div>
                       </label>
                     </div>
@@ -1385,17 +1445,17 @@ export function ConfigEditor({
             >
               <div className="space-y-4">
                 {draft.mcpServers.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] px-4 py-5 text-sm text-slate-500">
+                  <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface-strong)] px-4 py-5 text-sm text-[var(--foreground-muted)]">
                     {dictionary.app.emptyStates.mcpServers}
                   </div>
                 ) : null}
                 {draft.mcpServers.map((server, index) => (
                   <div
                     key={`mcp-${index}`}
-                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+                    className="rounded-2xl border border-[var(--border)] bg-[var(--surface-strong)] p-4"
                   >
                     <div className="mb-4 flex items-center justify-between gap-3">
-                      <h3 className="text-sm font-semibold text-white">
+                      <h3 className="text-sm font-semibold text-[var(--foreground)]">
                         {server.id || `${dictionary.fields.mcpId[0]} ${index + 1}`}
                       </h3>
                       <button
@@ -1447,7 +1507,7 @@ export function ConfigEditor({
                         >
                           {TRANSPORT_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>
-                              {dictionary.options.transport[option.value]}
+                              {optionDictionary.transport[option.value]}
                             </option>
                           ))}
                         </select>
@@ -1549,7 +1609,7 @@ export function ConfigEditor({
                         >
                           <input
                             type="checkbox"
-                            className="mt-1 h-4 w-4 accent-emerald-400"
+                            className="mt-1 h-4 w-4 accent-[var(--accent)]"
                             checked={checked}
                             onChange={(event) =>
                               setDraft((current) => {
@@ -1563,7 +1623,7 @@ export function ConfigEditor({
                             }
                           />
                           <div>
-                            <div className="text-sm font-medium text-slate-200">
+                            <div className="text-sm font-medium text-[var(--foreground)]">
                               {key === "enabled"
                                 ? dictionary.app.common.enabled
                                 : dictionary.app.common.required}
@@ -1613,7 +1673,7 @@ export function ConfigEditor({
                         />
                       </>
                     ) : (
-                      <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
+                      <div className="rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-3 text-sm text-[var(--accent-strong)]">
                         {dictionary.helpers.mcpHttpMode}
                       </div>
                     )}
@@ -1751,17 +1811,17 @@ export function ConfigEditor({
             >
               <div className="space-y-4">
                 {draft.profiles.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] px-4 py-5 text-sm text-slate-500">
+                  <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface-strong)] px-4 py-5 text-sm text-[var(--foreground-muted)]">
                     {dictionary.app.emptyStates.profiles}
                   </div>
                 ) : null}
                 {draft.profiles.map((profile, index) => (
                   <div
                     key={`profile-${index}`}
-                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+                    className="rounded-2xl border border-[var(--border)] bg-[var(--surface-strong)] p-4"
                   >
                     <div className="mb-4 flex items-center justify-between gap-3">
-                      <h3 className="text-sm font-semibold text-white">
+                      <h3 className="text-sm font-semibold text-[var(--foreground)]">
                         {profile.id || `${dictionary.fields.profileId[0]} ${index + 1}`}
                       </h3>
                       <button
@@ -1846,7 +1906,7 @@ export function ConfigEditor({
                           {sharedOptionBlank}
                           {APPROVAL_POLICY_OPTIONS.map((option) => (
                             <option key={option} value={option}>
-                              {dictionary.options.approvalPolicy[option]}
+                              {optionDictionary.approvalPolicy[option]}
                             </option>
                           ))}
                         </select>
@@ -1869,7 +1929,7 @@ export function ConfigEditor({
                           {sharedOptionBlank}
                           {SANDBOX_MODE_OPTIONS.map((option) => (
                             <option key={option} value={option}>
-                              {dictionary.options.sandboxMode[option]}
+                              {optionDictionary.sandboxMode[option]}
                             </option>
                           ))}
                         </select>
@@ -1892,7 +1952,7 @@ export function ConfigEditor({
                           {sharedOptionBlank}
                           {SERVICE_TIER_OPTIONS.map((option) => (
                             <option key={option} value={option}>
-                              {dictionary.options.serviceTier[option]}
+                              {optionDictionary.serviceTier[option]}
                             </option>
                           ))}
                         </select>
@@ -1932,7 +1992,7 @@ export function ConfigEditor({
                           {sharedOptionBlank}
                           {REASONING_OPTIONS.map((option) => (
                             <option key={option} value={option}>
-                              {dictionary.options.reasoning[option]}
+                              {optionDictionary.reasoning[option]}
                             </option>
                           ))}
                         </select>
@@ -1956,7 +2016,7 @@ export function ConfigEditor({
                           {sharedOptionBlank}
                           {PLAN_REASONING_OPTIONS.map((option) => (
                             <option key={option} value={option}>
-                              {dictionary.options.reasoning[option]}
+                              {optionDictionary.reasoning[option]}
                             </option>
                           ))}
                         </select>
@@ -2002,14 +2062,14 @@ export function ConfigEditor({
             >
               <div className="space-y-4">
                 {draft.projects.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] px-4 py-5 text-sm text-slate-500">
+                  <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface-strong)] px-4 py-5 text-sm text-[var(--foreground-muted)]">
                     {dictionary.app.emptyStates.projects}
                   </div>
                 ) : null}
                 {draft.projects.map((project, index) => (
                   <div
                     key={`project-${index}`}
-                    className="grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 md:grid-cols-[minmax(0,1fr)_240px_auto]"
+                    className="grid gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-strong)] p-4 md:grid-cols-[minmax(0,1fr)_240px_auto]"
                   >
                     <Field {...fieldText("projectPath")}>
                       <input
@@ -2045,7 +2105,7 @@ export function ConfigEditor({
                         {sharedOptionBlank}
                         {TRUST_LEVEL_OPTIONS.map((option) => (
                           <option key={option} value={option}>
-                            {dictionary.options.trustLevel[option]}
+                            {optionDictionary.trustLevel[option]}
                           </option>
                         ))}
                       </select>
@@ -2088,6 +2148,56 @@ export function ConfigEditor({
               title={dictionary.sections.advanced.title}
               description={dictionary.sections.advanced.description}
             >
+              <div className="rounded-2xl border border-slate-200/60 bg-slate-50/70 px-4 py-4 text-slate-900">
+                <div className="text-sm font-semibold">
+                  {dictionary.helpers.schemaDiffTitle}
+                </div>
+                <p className="mt-1 text-xs leading-5 text-slate-600">
+                  {dictionary.helpers.schemaDiffHint}
+                </p>
+                <div className="mt-4 space-y-3">
+                  {SCHEMA_DIFFS.map((entry) => {
+                    const isEmpty =
+                      entry.added.length === 0 &&
+                      entry.removed.length === 0 &&
+                      entry.deprecated.length === 0;
+
+                    return (
+                      <div
+                        key={`${entry.newTag}-${entry.oldTag}`}
+                        className="rounded-2xl border border-slate-200 bg-white/80 px-3 py-3"
+                      >
+                        <div className="text-xs font-semibold text-slate-600">
+                          {entry.newTag} vs {entry.oldTag}
+                        </div>
+                        {isEmpty ? (
+                          <div className="mt-2 text-xs text-slate-500">
+                            {dictionary.helpers.schemaDiffEmpty}
+                          </div>
+                        ) : (
+                          <div className="mt-2 space-y-2">
+                            {renderSchemaDiffGroup(
+                              schemaDiffLabels.added,
+                              "added",
+                              entry.added,
+                            )}
+                            {renderSchemaDiffGroup(
+                              schemaDiffLabels.removed,
+                              "removed",
+                              entry.removed,
+                            )}
+                            {renderSchemaDiffGroup(
+                              schemaDiffLabels.deprecated,
+                              "deprecated",
+                              entry.deprecated,
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
               <Field
                 label={dictionary.app.advanced.title}
                 hint={dictionary.app.advanced.description}
@@ -2103,7 +2213,7 @@ export function ConfigEditor({
           </main>
 
           <aside className="h-fit space-y-4 xl:sticky xl:top-4">
-            <div className="rounded-3xl border border-white/10 bg-slate-950/70 p-4 backdrop-blur">
+            <div className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-4 backdrop-blur">
               <div className="mb-4 rounded-2xl border border-sky-400/20 bg-sky-500/10 p-4">
                 <div className="text-sm font-semibold text-sky-100">
                   {dictionary.app.deploy.label}
@@ -2130,14 +2240,14 @@ export function ConfigEditor({
                   </a>
                 </div>
               </div>
-              <div className="mb-4 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4">
-                <div className="text-sm font-semibold text-emerald-100">
+              <div className="mb-4 rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 p-4">
+                <div className="text-sm font-semibold text-[var(--accent-strong)]">
                   {dictionary.app.recommended.label}
                 </div>
                 <p className="mt-1 text-sm leading-6 text-emerald-50/85">
                   {dictionary.app.recommended.description}
                 </p>
-                <p className="mt-2 text-xs leading-5 text-emerald-100/70">
+                <p className="mt-2 text-xs leading-5 text-[var(--accent-strong)]/70">
                   {dictionary.app.recommended.note}
                 </p>
                 <div className="mt-3">
@@ -2193,17 +2303,17 @@ export function ConfigEditor({
               {status.message}
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-slate-950/70 p-4 backdrop-blur">
+            <div className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-4 backdrop-blur">
               <div className="mb-3 flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-lg font-semibold text-white">
+                  <h2 className="text-lg font-semibold text-[var(--foreground)]">
                     {dictionary.app.preview.title}
                   </h2>
-                  <p className="mt-1 text-sm leading-6 text-slate-400">
+                  <p className="mt-1 text-sm leading-6 text-[var(--foreground-muted)]">
                     {dictionary.app.preview.description}
                   </p>
                 </div>
-                <div className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">
+                <div className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--foreground-muted)]">
                   {isGenerating
                     ? dictionary.app.actions.generating
                     : dictionary.app.actions.idle}
@@ -2215,31 +2325,31 @@ export function ConfigEditor({
                 >
                   <input
                     type="checkbox"
-                    className="mt-1 h-4 w-4 accent-emerald-400"
+                    className="mt-1 h-4 w-4 accent-[var(--accent)]"
                     checked={includeComments}
                     onChange={(event) => setIncludeComments(event.target.checked)}
                   />
                   <div>
-                    <div className="text-sm font-medium text-slate-200">
+                    <div className="text-sm font-medium text-[var(--foreground)]">
                       {dictionary.app.preview.includeCommentsLabel}
                     </div>
-                    <p className="mt-1 text-xs leading-5 text-slate-400">
+                    <p className="mt-1 text-xs leading-5 text-[var(--foreground-muted)]">
                       {dictionary.app.preview.includeCommentsHint}
                     </p>
                   </div>
                 </label>
               </div>
-              <div className="mb-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="mb-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-strong)] p-4">
                 <div className="mb-3">
-                  <div className="text-sm font-semibold text-white">
+                  <div className="text-sm font-semibold text-[var(--foreground)]">
                     {dictionary.app.validation.title}
                   </div>
-                  <p className="mt-1 text-xs leading-5 text-slate-400">
+                  <p className="mt-1 text-xs leading-5 text-[var(--foreground-muted)]">
                     {dictionary.app.validation.description}
                   </p>
                 </div>
                 {validationIssues.length === 0 ? (
-                  <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-100">
+                  <div className="rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-3 py-2 text-sm text-[var(--accent-strong)]">
                     {dictionary.app.validation.empty}
                   </div>
                 ) : (
@@ -2293,16 +2403,16 @@ export function ConfigEditor({
                   </ul>
                 </div>
               ) : null}
-              <div className="rounded-2xl border border-white/10 bg-slate-950/90 p-4">
-                <pre className="max-h-[70vh] overflow-auto whitespace-pre-wrap break-words text-sm leading-6 text-slate-100">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-strong)] p-4">
+                <pre className="max-h-[70vh] overflow-auto whitespace-pre-wrap break-words text-sm leading-6 text-[var(--foreground)]">
                   {preview || dictionary.app.preview.empty}
                 </pre>
               </div>
-              <div className="mt-3 text-xs text-slate-500">
+              <div className="mt-3 text-xs text-[var(--foreground-muted)]">
                 <div>
                   {dictionary.app.reference.label}:{" "}
                   <a
-                    className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-4 transition hover:text-emerald-200"
+                    className="text-[var(--accent)] underline decoration-emerald-400/40 underline-offset-4 transition hover:text-[var(--accent-strong)]"
                     href={SAMPLE_REFERENCE_URL}
                     target="_blank"
                     rel="noreferrer"

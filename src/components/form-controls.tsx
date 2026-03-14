@@ -1,21 +1,31 @@
 import React from "react";
 
+export type BadgeTone = "added" | "deprecated" | "removed" | "changed";
+
+export type Badge = {
+  label: string;
+  tone: BadgeTone;
+};
+
 type SectionCardProps = {
   id?: string;
   title: string;
   description?: string;
+  badges?: Badge[];
   children: React.ReactNode;
 };
 
 type FieldProps = {
   label: string;
   hint?: string;
+  badges?: Badge[];
   children: React.ReactNode;
 };
 
 type StringListEditorProps = {
   label: string;
   hint?: string;
+  badges?: Badge[];
   values: string[];
   onChange: (values: string[]) => void;
   addLabel: string;
@@ -27,6 +37,7 @@ type StringListEditorProps = {
 type KeyValueListEditorProps = {
   label: string;
   hint?: string;
+  badges?: Badge[];
   values: Array<{ key: string; value: string }>;
   onChange: (values: Array<{ key: string; value: string }>) => void;
   addLabel: string;
@@ -39,37 +50,111 @@ type KeyValueListEditorProps = {
 };
 
 export const inputClassName =
-  "w-full rounded-xl border border-white/10 bg-slate-950/70 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20";
+  "w-full rounded-[var(--radius-control)] border border-[var(--border)] bg-[var(--surface-strong)] px-4 py-2 text-sm text-[var(--foreground)] shadow-[var(--shadow-control)] outline-none transition hover:border-[var(--accent)]/30 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 placeholder:text-[var(--foreground-muted)] disabled:cursor-not-allowed disabled:opacity-60";
 
-export const textareaClassName = `${inputClassName} min-h-28 resize-y`;
+export const textareaClassName = `${inputClassName} min-h-32 resize-y`;
 
 export const secondaryButtonClassName =
-  "inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-200 transition hover:border-emerald-400/40 hover:bg-emerald-400/10";
+  "inline-flex items-center justify-center rounded-[var(--radius-control)] border border-[var(--border)] bg-[var(--surface-strong)] px-3 py-2 text-sm font-medium !text-[var(--foreground)] shadow-sm transition hover:border-[var(--accent)]/40 hover:bg-[var(--surface-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 active:translate-y-px active:shadow-none";
 
 export const primaryButtonClassName =
-  "inline-flex items-center justify-center rounded-xl bg-emerald-500 px-3 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-emerald-500/50";
+  "inline-flex items-center justify-center rounded-[var(--radius-control)] bg-[var(--accent)] px-3 py-2 text-sm font-semibold !text-white shadow-[var(--shadow-button)] transition hover:bg-[var(--accent-strong)] hover:shadow-[var(--shadow-button-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/30 active:translate-y-px active:shadow-[var(--shadow-button-active)] disabled:cursor-not-allowed disabled:bg-[var(--accent)]/50";
 
-export function SectionCard({ id, title, description, children }: SectionCardProps) {
+export const surfaceCardClassName =
+  "rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm";
+
+export const surfaceInsetClassName =
+  "rounded-[var(--radius-control)] border border-[var(--border)] bg-[var(--surface-strong)]";
+
+export const surfaceSoftClassName =
+  "rounded-[var(--radius-control)] border border-[var(--border)] bg-[var(--surface-soft)]";
+
+export const emptyStateClassName =
+  "rounded-[var(--radius-control)] border border-dashed border-[var(--border)] bg-[var(--surface-strong)] px-4 py-5 text-sm text-[var(--foreground-muted)]";
+
+export const formSectionHeaderClassName =
+  "rounded-[var(--radius-control)] border border-[var(--border)] bg-[var(--surface-strong)] px-4 py-3";
+
+export const formBadgeClassName =
+  "inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-strong)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--foreground-muted)]";
+
+export const checkboxCardClassName =
+  "flex items-start gap-3 rounded-[var(--radius-control)] border px-4 py-3";
+export const hintPillClassName =
+  "inline-block max-w-full rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs font-mono leading-5 text-[var(--foreground-muted)] whitespace-pre-wrap break-words";
+
+function badgeToneClassName(tone: BadgeTone) {
+  switch (tone) {
+    case "added":
+      return "border-emerald-200/80 bg-emerald-50 text-emerald-700";
+    case "deprecated":
+      return "border-amber-200/80 bg-amber-50 text-amber-700";
+    case "removed":
+      return "border-rose-200/80 bg-rose-50 text-rose-700";
+    case "changed":
+      return "border-sky-200/80 bg-sky-50 text-sky-700";
+    default:
+      return "border-[var(--border)] bg-[var(--surface-strong)] text-[var(--foreground-muted)]";
+  }
+}
+
+function BadgeRow({ badges }: { badges?: Badge[] }) {
+  if (!badges || badges.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-2" aria-hidden="true">
+      {badges.map((badge, index) => (
+        <span
+          key={`${badge.label}-${index}`}
+          className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${badgeToneClassName(
+            badge.tone,
+          )}`}
+        >
+          {badge.label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+export function SectionCard({ id, title, description, badges, children }: SectionCardProps) {
   return (
     <section
       id={id}
-      className="rounded-3xl border border-white/10 bg-slate-950/60 p-6 shadow-[0_20px_80px_-40px_rgba(34,197,94,0.35)] backdrop-blur"
+      className="relative overflow-hidden rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-card)] backdrop-blur transition hover:border-[var(--accent)]/30 hover:shadow-[var(--shadow-card-hover)] before:absolute before:left-0 before:top-6 before:bottom-6 before:w-1 before:rounded-full before:bg-[var(--accent)]/20"
     >
-      <div className="mb-5 space-y-1">
-        <h2 className="text-xl font-semibold text-white">{title}</h2>
-        {description ? <p className="text-sm text-slate-400">{description}</p> : null}
+      <div className="pointer-events-none absolute right-6 top-6 h-16 w-16 rounded-full bg-[var(--accent)]/15 blur-2xl" />
+      <div className="relative z-10 mb-5 space-y-1">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <h2 className="font-display text-2xl font-semibold text-[var(--foreground)]">
+            {title}
+          </h2>
+          <BadgeRow badges={badges} />
+        </div>
+        {description ? (
+          <p className="text-sm text-[var(--foreground-muted)]">{description}</p>
+        ) : null}
       </div>
-      <div className="space-y-5">{children}</div>
+      <div className="relative z-10 space-y-5">{children}</div>
     </section>
   );
 }
 
-export function Field({ label, hint, children }: FieldProps) {
+export function Field({ label, hint, badges, children }: FieldProps) {
   return (
     <label className="block space-y-2">
-      <div>
-        <div className="text-sm font-medium text-slate-200">{label}</div>
-        {hint ? <p className="mt-1 text-xs leading-5 text-slate-400">{hint}</p> : null}
+      <div className="space-y-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="text-sm font-medium text-[var(--foreground)]">{label}</div>
+          <BadgeRow badges={badges} />
+        </div>
+        {hint ? (
+          <div>
+            <span className={hintPillClassName}>{hint}</span>
+          </div>
+        ) : null}
       </div>
       {children}
     </label>
@@ -79,6 +164,7 @@ export function Field({ label, hint, children }: FieldProps) {
 export function StringListEditor({
   label,
   hint,
+  badges,
   values,
   onChange,
   addLabel,
@@ -87,13 +173,9 @@ export function StringListEditor({
   placeholder,
 }: StringListEditorProps) {
   return (
-    <Field label={label} hint={hint}>
+    <Field label={label} hint={hint} badges={badges}>
       <div className="space-y-2">
-        {values.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] px-3 py-4 text-sm text-slate-500">
-            {emptyLabel}
-          </div>
-        ) : null}
+        {values.length === 0 ? <div className={emptyStateClassName}>{emptyLabel}</div> : null}
         {values.map((value, index) => (
           <div key={`list-value-${index}`} className="flex gap-2">
             <input
@@ -130,6 +212,7 @@ export function StringListEditor({
 export function KeyValueListEditor({
   label,
   hint,
+  badges,
   values,
   onChange,
   addLabel,
@@ -141,13 +224,9 @@ export function KeyValueListEditor({
   valuePlaceholder,
 }: KeyValueListEditorProps) {
   return (
-    <Field label={label} hint={hint}>
+    <Field label={label} hint={hint} badges={badges}>
       <div className="space-y-2">
-        {values.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] px-3 py-4 text-sm text-slate-500">
-            {emptyLabel}
-          </div>
-        ) : null}
+        {values.length === 0 ? <div className={emptyStateClassName}>{emptyLabel}</div> : null}
         {values.map((item, index) => (
           <div key={`pair-${index}`} className="grid gap-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
             <input
