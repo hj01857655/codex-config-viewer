@@ -37,7 +37,7 @@ describe("config TOML transforms", () => {
       "# Declared against official sample on 2026-03-15",
     );
     expect(generated.toml).toContain(
-      "# Codex release: 0.115.0-alpha.18 (rust-v0.115.0-alpha.18)",
+      "# Codex release: 0.114.0 (rust-v0.114.0)",
     );
     expect(parsed.draft.general.model).toBe("gpt-5.4");
     expect(parsed.draft.general.sandboxMode).toBe("workspace-write");
