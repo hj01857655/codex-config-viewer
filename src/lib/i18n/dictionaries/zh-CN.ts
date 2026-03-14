@@ -34,6 +34,7 @@ export const zhCnDictionary: DictionaryShape = {
       label: "参考来源",
       source: "官方 sample config",
       declaredAt: "声明日期",
+      today: "当前日期",
       codexVersion: "Codex 仓库版本",
     },
     deploy: {
@@ -105,6 +106,7 @@ export const zhCnDictionary: DictionaryShape = {
       path: "Path",
       id: "ID",
     },
+    navigationHint: "提示：左侧区块标题保持英文，避免中英文混用。",
   },
   sections: {
     general: {

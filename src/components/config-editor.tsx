@@ -139,6 +139,7 @@ export function ConfigEditor({
   const [preview, setPreview] = useState(initialPreview);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [validationIssues, setValidationIssues] = useState<ConfigValidationIssue[]>([]);
+  const [todayLabel, setTodayLabel] = useState("");
   const [status, setStatus] = useState<StatusMessage>({
     tone: "neutral",
     message: dictionary.app.feedback.idle,
@@ -157,6 +158,34 @@ export function ConfigEditor({
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
+
+  useEffect(() => {
+    let timer: number | undefined;
+
+    const updateToday = () => {
+      setTodayLabel(formatDate(new Date()));
+    };
+
+    const scheduleNext = () => {
+      const now = new Date();
+      const next = new Date(now);
+      next.setHours(24, 0, 0, 0);
+      const delay = next.getTime() - now.getTime();
+      timer = window.setTimeout(() => {
+        updateToday();
+        scheduleNext();
+      }, Math.max(delay, 1000));
+    };
+
+    updateToday();
+    scheduleNext();
+
+    return () => {
+      if (typeof timer === "number") {
+        window.clearTimeout(timer);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
@@ -274,9 +303,12 @@ export function ConfigEditor({
     () =>
       SECTION_ORDER.map((sectionId) => ({
         id: sectionId,
-        title: dictionary.sections[sectionId].title,
+        title:
+          locale === "zh-CN"
+            ? EN_DICTIONARY.sections[sectionId].title
+            : dictionary.sections[sectionId].title,
       })),
-    [dictionary.sections],
+    [dictionary.sections, locale],
   );
 
   function fieldText<Key extends keyof Dictionary["fields"]>(key: Key) {
@@ -490,6 +522,13 @@ export function ConfigEditor({
     applyPreset(createSampleDraft(), dictionary.app.sampleLabel, initialPreview);
   }
 
+  function formatDate(value: Date) {
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, "0");
+    const day = String(value.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
   const sharedOptionBlank = (
     <option value="">{dictionary.app.common.blankOption}</option>
   );
@@ -518,6 +557,11 @@ export function ConfigEditor({
                 <span>
                   {dictionary.app.reference.declaredAt}: {SAMPLE_REVIEWED_ON}
                 </span>
+                {todayLabel ? (
+                  <span>
+                    {dictionary.app.reference.today}: {todayLabel}
+                  </span>
+                ) : null}
                 <span>
                   {dictionary.app.reference.codexVersion}: {CODEX_RELEASE_VERSION} (
                   {CODEX_RELEASE_TAG})
@@ -558,6 +602,7 @@ export function ConfigEditor({
 
         <div className="grid gap-6 xl:grid-cols-[220px_minmax(0,1fr)_420px]">
           <aside className="animate-page-in animate-page-in-delay-1 h-fit rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] p-4 backdrop-blur xl:sticky xl:top-4">
+            {/* Left navigation stays in English to avoid mixed labels in zh-CN. */}
             <div className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--foreground-muted)]">
               Sections
             </div>
@@ -577,7 +622,11 @@ export function ConfigEditor({
           <main className="animate-page-in animate-page-in-delay-2 space-y-6">
             <SectionCard
               id="general"
-              title={dictionary.sections.general.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.general.title
+                  : dictionary.sections.general.title
+              }
               description={dictionary.sections.general.description}
             >
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -873,7 +922,11 @@ export function ConfigEditor({
 
             <SectionCard
               id="history"
-              title={dictionary.sections.history.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.history.title
+                  : dictionary.sections.history.title
+              }
               description={dictionary.sections.history.description}
             >
               <div className="grid gap-4 md:grid-cols-2">
@@ -909,7 +962,11 @@ export function ConfigEditor({
 
             <SectionCard
               id="features"
-              title={dictionary.sections.features.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.features.title
+                  : dictionary.sections.features.title
+              }
               description={dictionary.sections.features.description}
             >
               <div className="rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-3">
@@ -973,7 +1030,11 @@ export function ConfigEditor({
 
             <SectionCard
               id="sandbox"
-              title={dictionary.sections.sandbox.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.sandbox.title
+                  : dictionary.sections.sandbox.title
+              }
               description={dictionary.sections.sandbox.description}
             >
               {draft.general.sandboxMode !== "workspace-write" ? (
@@ -1016,7 +1077,11 @@ export function ConfigEditor({
 
             <SectionCard
               id="shell"
-              title={dictionary.sections.shell.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.shell.title
+                  : dictionary.sections.shell.title
+              }
               description={dictionary.sections.shell.description}
             >
               <div className="grid gap-4 md:grid-cols-2">
@@ -1087,7 +1152,11 @@ export function ConfigEditor({
 
             <SectionCard
               id="tools"
-              title={dictionary.sections.tools.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.tools.title
+                  : dictionary.sections.tools.title
+              }
               description={dictionary.sections.tools.description}
             >
               <label
@@ -1112,7 +1181,11 @@ export function ConfigEditor({
 
             <SectionCard
               id="modelProviders"
-              title={dictionary.sections.modelProviders.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.modelProviders.title
+                  : dictionary.sections.modelProviders.title
+              }
               description={dictionary.sections.modelProviders.description}
             >
               <div className="space-y-4">
@@ -1440,7 +1513,11 @@ export function ConfigEditor({
 
             <SectionCard
               id="mcpServers"
-              title={dictionary.sections.mcpServers.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.mcpServers.title
+                  : dictionary.sections.mcpServers.title
+              }
               description={dictionary.sections.mcpServers.description}
             >
               <div className="space-y-4">
@@ -1806,7 +1883,11 @@ export function ConfigEditor({
 
             <SectionCard
               id="profiles"
-              title={dictionary.sections.profiles.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.profiles.title
+                  : dictionary.sections.profiles.title
+              }
               description={dictionary.sections.profiles.description}
             >
               <div className="space-y-4">
@@ -2057,7 +2138,11 @@ export function ConfigEditor({
 
             <SectionCard
               id="projects"
-              title={dictionary.sections.projects.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.projects.title
+                  : dictionary.sections.projects.title
+              }
               description={dictionary.sections.projects.description}
             >
               <div className="space-y-4">
@@ -2145,7 +2230,11 @@ export function ConfigEditor({
 
             <SectionCard
               id="advanced"
-              title={dictionary.sections.advanced.title}
+              title={
+                locale === "zh-CN"
+                  ? EN_DICTIONARY.sections.advanced.title
+                  : dictionary.sections.advanced.title
+              }
               description={dictionary.sections.advanced.description}
             >
               <div className="rounded-2xl border border-slate-200/60 bg-slate-50/70 px-4 py-4 text-slate-900">
@@ -2423,6 +2512,11 @@ export function ConfigEditor({
                 <div>
                   {dictionary.app.reference.declaredAt}: {SAMPLE_REVIEWED_ON}
                 </div>
+                {todayLabel ? (
+                  <div>
+                    {dictionary.app.reference.today}: {todayLabel}
+                  </div>
+                ) : null}
                 <div>
                   {dictionary.app.reference.codexVersion}: {CODEX_RELEASE_VERSION} (
                   {CODEX_RELEASE_TAG})

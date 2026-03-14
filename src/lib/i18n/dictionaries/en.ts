@@ -35,6 +35,7 @@ export const enDictionary: DictionaryShape = {
       label: "Reference",
       source: "Official sample config",
       declaredAt: "Declared date",
+      today: "Today",
       codexVersion: "Codex release",
     },
     deploy: {
@@ -111,6 +112,7 @@ export const enDictionary: DictionaryShape = {
       path: "Path",
       id: "ID",
     },
+    navigationHint: "Section titles stay in English to keep config labels consistent.",
   },
   sections: {
     general: {
@@ -371,6 +373,13 @@ export const enDictionary: DictionaryShape = {
     featuresDeprecatedTitle: "Deprecated feature flags (read-only)",
     featuresDeprecatedHint:
       "Legacy or unknown flags captured from imported TOML. Update them in the advanced TOML area.",
+    schemaDiffTitle: "Schema change log",
+    schemaDiffHint:
+      "Field-level diffs between upstream config.schema.json release tags (v0.100.0+).",
+    schemaDiffEmpty: "No field-level changes in this release.",
+    schemaDiffAdded: "Added",
+    schemaDiffRemoved: "Removed",
+    schemaDiffDeprecated: "Deprecated",
   },
   options: {
     approvalPolicy: {
